@@ -22,6 +22,13 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
 
     if (result.success) {
       onClose();
+      // Wait for UI to mount, then scroll to dashboard
+      setTimeout(() => {
+        const dashboard = document.getElementById('admin-dashboard');
+        if (dashboard) {
+          dashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
     } else {
       setError(result.error);
     }
@@ -114,10 +121,6 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
             )}
           </button>
         </form>
-
-        <div className="text-center text-[11px] text-gray-400 pt-2 border-t border-white/10">
-          Default Admin Credentials: <strong className="text-royal-gold">admin</strong> / <strong className="text-royal-gold">admin123</strong>
-        </div>
 
       </div>
     </div>

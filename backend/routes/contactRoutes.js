@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const { createTransporter } = require('../config/mailer');
+const { query } = require('../config/db');
 
 router.post('/contact', async (req, res) => {
   try {
@@ -14,6 +15,12 @@ router.post('/contact', async (req, res) => {
         error: 'Please fill in all required fields: Name, Email, Phone, Event Date, and Event Type.'
       });
     }
+
+    // Save booking inquiry to PostgreSQL database
+    await query(
+      'INSERT INTO bookings (name, email, phone, location, event_date, guest_count, event_type, message) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+      [name, email, phone, location, eventDate, guestCount, eventType, message]
+    );
 
     const { transporter, isEthereal } = await createTransporter();
     const receiver = process.env.ADMIN_EMAIL || process.env.RECEIVER_EMAIL || 'divyanshthakur327@gmail.com';

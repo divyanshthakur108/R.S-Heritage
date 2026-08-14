@@ -78,9 +78,9 @@ const Resorts = ({ onBookNowClick }) => {
                 {/* Card Action */}
                 <button
                   onClick={onBookNowClick}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-royal-gold/20 to-royal-gold/40 hover:from-royal-gold hover:to-royal-goldDark text-royal-gold hover:text-royal-emeraldDark font-bold text-sm border border-royal-gold/40 hover:border-transparent transition-all duration-300 flex items-center justify-center space-x-2"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-royal-gold/20 to-royal-gold/40 hover:from-royal-gold hover:to-royal-goldDark text-royal-gold hover:text-royal-emeraldDark font-bold text-sm border border-royal-gold/40 hover:border-transparent transition-all duration-300 flex items-center justify-center space-x-2"
                 >
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-4 h-4 shrink-0" />
                   <span>Reserve {venue.name}</span>
                 </button>
               </div>

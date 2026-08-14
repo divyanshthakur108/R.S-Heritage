@@ -2,49 +2,47 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken, requireAdmin, JWT_SECRET } = require('../middleware/authMiddleware');
-
-// In-memory availability store (retained during server session)
-let venueAvailability = {
-  '2026-08-05': 'booked',
-  '2026-08-12': 'booked',
-  '2026-08-18': 'booked',
-  '2026-08-24': 'booked',
-  '2026-08-28': 'booked',
-  '2026-08-02': 'fast-filling',
-  '2026-08-09': 'fast-filling',
-  '2026-08-15': 'fast-filling',
-  '2026-08-21': 'fast-filling',
-  '2026-08-29': 'fast-filling'
-};
+const { query } = require('../config/db');
 
 // Admin Login Endpoint
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-  const validAdminUser = process.env.ADMIN_USERNAME || 'admin';
-  const validAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
+    const result = await query(
+      'SELECT * FROM users WHERE username = $1 AND password = $2',
+      [username, password]
+    );
 
-  if (username === validAdminUser && password === validAdminPass) {
-    const userPayload = {
-      id: 'admin-001',
-      username: validAdminUser,
-      role: 'admin'
-    };
+    if (result.rows.length > 0) {
+      const dbUser = result.rows[0];
+      const userPayload = {
+        id: dbUser.id,
+        username: dbUser.username,
+        role: dbUser.role
+      };
 
-    const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '24h' });
 
-    return res.status(200).json({
-      success: true,
-      message: 'Admin authentication successful',
-      token,
-      user: userPayload
+      return res.status(200).json({
+        success: true,
+        message: 'Admin authentication successful',
+        token,
+        user: userPayload
+      });
+    }
+
+    return res.status(401).json({
+      success: false,
+      error: 'Invalid admin username or password'
+    });
+  } catch (error) {
+    console.error('Admin login API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Database connection error during login'
     });
   }
-
-  return res.status(401).json({
-    success: false,
-    error: 'Invalid admin username or password'
-  });
 });
 
 // Protected Admin Me Profile Endpoint
@@ -56,31 +54,81 @@ router.get('/me', verifyToken, requireAdmin, (req, res) => {
 });
 
 // Protected Admin Availability GET Endpoint
-router.get('/availability', verifyToken, requireAdmin, (req, res) => {
-  return res.status(200).json({
-    success: true,
-    availability: venueAvailability
-  });
+router.get('/availability', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const result = await query('SELECT date_str, status FROM availability');
+    const availabilityMap = {};
+    result.rows.forEach(row => {
+      availabilityMap[row.date_str] = row.status;
+    });
+
+    return res.status(200).json({
+      success: true,
+      availability: availabilityMap
+    });
+  } catch (error) {
+    console.error('Fetch availability API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to fetch date availability from database'
+    });
+  }
 });
 
 // Protected Admin Availability POST/PUT Update Endpoint
-router.post('/availability', verifyToken, requireAdmin, (req, res) => {
-  const { dateStr, status } = req.body;
+router.post('/availability', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { dateStr, status } = req.body;
 
-  if (!dateStr || !status) {
-    return res.status(400).json({
+    if (!dateStr || !status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters: dateStr and status'
+      });
+    }
+
+    // Upsert date status
+    await query(
+      'INSERT INTO availability (date_str, status) VALUES ($1, $2) ON CONFLICT (date_str) DO UPDATE SET status = EXCLUDED.status',
+      [dateStr, status]
+    );
+
+    // Fetch updated availability mapping
+    const result = await query('SELECT date_str, status FROM availability');
+    const availabilityMap = {};
+    result.rows.forEach(row => {
+      availabilityMap[row.date_str] = row.status;
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Updated availability status for ${dateStr} to '${status}'`,
+      availability: availabilityMap
+    });
+  } catch (error) {
+    console.error('Update availability API error:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Missing required parameters: dateStr and status'
+      error: 'Failed to update date availability in database'
     });
   }
+});
 
-  venueAvailability[dateStr] = status;
-
-  return res.status(200).json({
-    success: true,
-    message: `Updated availability status for ${dateStr} to '${status}'`,
-    availability: venueAvailability
-  });
+// Protected Admin Bookings GET Endpoint
+router.get('/bookings', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const result = await query('SELECT * FROM bookings ORDER BY created_at DESC');
+    return res.status(200).json({
+      success: true,
+      bookings: result.rows
+    });
+  } catch (error) {
+    console.error('Fetch bookings API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to fetch customer bookings from database'
+    });
+  }
 });
 
 module.exports = router;

@@ -34,6 +34,18 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock background body scroll when mobile menu drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { name: 'Home', href: '#home', id: 'home' },
     { name: 'About Us', href: '#about', id: 'about' },
@@ -52,23 +64,23 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           
-          {/* Brand Logo (Left) */}
-          <a href="#home" className="flex items-center space-x-3.5 group shrink-0">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 border-royal-gold overflow-hidden shadow-glow group-hover:scale-105 transition-transform shrink-0 bg-royal-emeraldDark flex items-center justify-center">
+          {/* Brand Logo & Title (Far Left) */}
+          <a href="#home" className="flex items-center space-x-2.5 lg:space-x-3.5 group shrink-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full border-2 border-royal-gold overflow-hidden shadow-glow group-hover:scale-105 transition-transform shrink-0 bg-royal-emeraldDark flex items-center justify-center">
               <img src="/logo.jpg" alt="R.S Heritage Emblem" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-gold-gradient block leading-tight">
+              <span className="font-serif text-lg sm:text-xl lg:text-2xl font-bold tracking-wider text-gold-gradient block leading-tight whitespace-nowrap">
                 R.S HERITAGE
               </span>
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-royal-goldLight/80 block mt-0.5 font-medium whitespace-nowrap">
+              <span className="text-[8px] sm:text-[9px] lg:text-[10px] uppercase tracking-[0.18em] text-royal-goldLight/80 block mt-0.5 font-medium whitespace-nowrap">
                 Marriage & Event Venue
               </span>
             </div>
           </a>
 
-          {/* Navigation Links (Centered) */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 xl:space-x-10">
+          {/* Centered Navigation Links with Spacing Protection */}
+          <nav className="hidden md:flex items-center justify-center space-x-4 lg:space-x-6 xl:space-x-8 mx-3 lg:mx-6 shrink-0">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
 
@@ -77,7 +89,7 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
                   key={link.name}
                   href={link.href}
                   onClick={() => setActiveSection(link.id)}
-                  className={`text-xs lg:text-sm font-medium tracking-wide transition-all duration-200 relative py-1 ${
+                  className={`text-xs lg:text-sm font-medium tracking-wide transition-all duration-200 relative py-1 whitespace-nowrap ${
                     isActive
                       ? 'text-royal-gold font-semibold'
                       : 'text-white/90 hover:text-royal-gold'
@@ -96,33 +108,32 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             })}
           </nav>
 
-          {/* Action Buttons (Right) */}
-          <div className="hidden lg:flex items-center space-x-3 xl:space-x-4 shrink-0">
-            
+          {/* Right Action Buttons (Phone & Book Venue) */}
+          <div className="hidden lg:flex items-center space-x-2.5 xl:space-x-3 shrink-0">
             {/* Admin Authentication Entry Point */}
             {isAdmin ? (
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={onOpenCalendar}
-                  className="px-3.5 py-2 rounded-full bg-royal-gold/20 text-royal-gold text-xs font-bold border border-royal-gold/60 flex items-center space-x-1.5 transition-all hover:bg-royal-gold/30 shadow-glow"
+              <div className="flex items-center space-x-1.5 shrink-0">
+                <a
+                  href="/dashboard"
+                  className="px-3 py-1.5 rounded-full bg-royal-gold/20 text-royal-gold text-xs font-bold border border-royal-gold/60 flex items-center space-x-1 transition-all hover:bg-royal-gold/30 shadow-glow whitespace-nowrap"
                 >
-                  <Calendar className="w-3.5 h-3.5 text-royal-gold" />
-                  <span>Admin Availability</span>
-                </button>
+                  <ShieldCheck className="w-3.5 h-3.5 text-royal-gold" />
+                  <span>Admin Dashboard</span>
+                </a>
                 <button
                   onClick={logout}
                   title="Sign out of Admin Session"
-                  className="p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/20 transition-all"
+                  className="p-1.5 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/20 transition-all"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={onOpenAdminLogin}
-                className="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 text-royal-goldLight text-xs font-medium border border-royal-gold/30 hover:border-royal-gold/60 flex items-center space-x-1.5 transition-all shadow-sm"
+                className="px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/15 text-royal-goldLight text-[11px] xl:text-xs font-medium border border-royal-gold/30 hover:border-royal-gold/60 flex items-center space-x-1 transition-all shadow-sm shrink-0 whitespace-nowrap"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-royal-gold" />
+                <ShieldCheck className="w-3 h-3 text-royal-gold" />
                 <span>Admin Login</span>
               </button>
             )}
@@ -130,7 +141,7 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             {/* Phone Quick Call */}
             <a
               href={`tel:${VENUE_INFO.phonePrimary}`}
-              className="flex items-center space-x-1.5 text-royal-goldLight hover:text-royal-gold text-xs xl:text-sm font-semibold transition-colors shrink-0"
+              className="flex items-center space-x-1 text-royal-goldLight hover:text-royal-gold text-xs font-semibold transition-colors shrink-0 whitespace-nowrap"
             >
               <Phone className="w-3.5 h-3.5 text-royal-gold animate-bounce" />
               <span>{VENUE_INFO.phonePrimary}</span>
@@ -139,9 +150,9 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             {/* Primary CTA: Book Venue */}
             <button
               onClick={onBookNowClick}
-              className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-royal-gold via-royal-goldLight to-royal-goldDark text-royal-emeraldDark text-xs sm:text-sm font-bold tracking-wide shadow-glow hover:brightness-110 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5 shrink-0"
+              className="px-4 py-2 rounded-full bg-gradient-to-r from-royal-gold via-royal-goldLight to-royal-goldDark text-royal-emeraldDark text-xs font-bold tracking-wide shadow-glow hover:brightness-110 hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5 shrink-0 whitespace-nowrap"
             >
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-3.5 h-3.5" />
               <span>Book Venue</span>
             </button>
           </div>
@@ -184,16 +195,14 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
           <div className="pt-4 flex flex-col space-y-3">
             {isAdmin ? (
               <>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenCalendar();
-                  }}
+                <a
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="w-full py-2.5 rounded-full bg-royal-gold/20 text-royal-gold text-center font-bold text-xs tracking-wider border border-royal-gold/60 flex items-center justify-center space-x-2"
                 >
-                  <Calendar className="w-4 h-4" />
-                  <span>Admin Availability</span>
-                </button>
+                  <ShieldCheck className="w-4 h-4 text-royal-gold" />
+                  <span>Admin Dashboard</span>
+                </a>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -206,16 +215,14 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAdminLogin();
-                }}
+              <a
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
                 className="w-full py-2.5 rounded-full bg-white/10 text-royal-goldLight text-center font-semibold text-xs tracking-wider border border-royal-gold/30 flex items-center justify-center space-x-2"
               >
                 <ShieldCheck className="w-4 h-4 text-royal-gold" />
                 <span>Admin Login</span>
-              </button>
+              </a>
             )}
 
             <a

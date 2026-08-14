@@ -92,7 +92,7 @@ const Hero = ({ onBookNowClick, onOpenAdminCalendar }) => {
       {/* Scroll Down Indicator */}
       <a 
         href="#about" 
-        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-royal-goldLight/70 hover:text-royal-gold transition-colors flex flex-col items-center space-y-1 animate-bounce"
+        className="absolute bottom-6 left-0 right-0 mx-auto w-fit text-royal-goldLight/70 hover:text-royal-gold transition-colors flex flex-col items-center space-y-1 animate-bounce"
         aria-label="Scroll to About Section"
       >
         <span className="text-xs tracking-widest uppercase">Discover More</span>

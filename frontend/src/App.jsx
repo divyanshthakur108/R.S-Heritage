@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
@@ -9,12 +10,19 @@ import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import CalendarModal from './components/CalendarModal';
 import AdminLoginModal from './components/AdminLoginModal';
-import { AuthProvider } from './context/AuthContext';
+import AdminDashboardPage from './components/AdminDashboardPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 
-function MainApp() {
+function MainAppLayout() {
+  const { isAdmin } = useAuth();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
+
+  if (isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const scrollToContact = () => {
     const contactSection = document.getElementById('contact');
@@ -33,7 +41,7 @@ function MainApp() {
       <Navbar 
         onBookNowClick={scrollToContact} 
         onOpenCalendar={() => setIsCalendarOpen(true)} 
-        onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
+        onOpenAdminLogin={() => window.location.href = '/dashboard'}
       />
       <main>
         <Hero 
@@ -46,6 +54,7 @@ function MainApp() {
         <Gallery />
         <ContactForm selectedDate={selectedDate} />
       </main>
+      
       <Footer />
 
       <CalendarModal
@@ -65,7 +74,14 @@ function MainApp() {
 function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<MainAppLayout />} />
+            <Route path="/dashboard" element={<AdminDashboardPage />} />
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }

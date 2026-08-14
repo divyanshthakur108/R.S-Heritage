@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle2, AlertCircle, Sparkles, Send, ShieldCheck, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
   const { token, isAdmin } = useAuth();
+  const { showToast } = useToast();
   const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // August 2026 default
   const [selectedDate, setSelectedDate] = useState(null);
   const [availabilityMap, setAvailabilityMap] = useState({});
@@ -21,7 +23,8 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
     setApiError(null);
 
     try {
-      const response = await fetch('/api/admin/availability', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}/api/admin/availability`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -46,7 +49,8 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
     if (!isAdmin || !token) return;
 
     try {
-      const response = await fetch('/api/admin/availability', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}/api/admin/availability`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,11 +63,13 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
 
       if (response.ok && data.success) {
         setAvailabilityMap(data.availability);
+        showToast(`Successfully updated date status for ${dateStr}.`, 'success');
       } else {
-        alert(data.error || 'Failed to update date status');
+        showToast(data.error || 'Failed to update date status', 'error');
       }
     } catch (err) {
       console.error('Update status error:', err);
+      showToast('Failed to update date status.', 'error');
     }
   };
 
@@ -88,12 +94,6 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
     if (availabilityMap[dateStr]) {
       return availabilityMap[dateStr];
     }
-
-    const defaultBookedDays = [5, 12, 18, 24, 28];
-    const defaultFastFillingDays = [2, 9, 15, 21, 29];
-
-    if (defaultBookedDays.includes(day)) return 'booked';
-    if (defaultFastFillingDays.includes(day)) return 'fast-filling';
     return 'available';
   };
 

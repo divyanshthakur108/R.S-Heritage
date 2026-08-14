@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
 import { Send, Phone, Mail, MapPin, Calendar, Users, Sparkles, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
+import PhoneInput from 'react-phone-input-2';
+import { useToast } from '../context/ToastContext';
+import 'react-phone-input-2/lib/style.css';
+
+const getTodayDateString = () => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 const ContactForm = ({ selectedDate }) => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,9 +26,16 @@ const ContactForm = ({ selectedDate }) => {
     message: ''
   });
 
+  const [errors, setErrors] = useState({
+    phone: '',
+    eventDate: '',
+    guestCount: ''
+  });
+
   React.useEffect(() => {
     if (selectedDate) {
       setFormData(prev => ({ ...prev, eventDate: selectedDate }));
+      setErrors(prev => ({ ...prev, eventDate: '' }));
     }
   }, [selectedDate]);
 
@@ -26,17 +45,73 @@ const ContactForm = ({ selectedDate }) => {
     error: null
   });
 
+  const validateField = (name, value) => {
+    let errMsg = '';
+    if (name === 'phone') {
+      if (!value || value.length < 10) {
+        errMsg = 'Please enter a valid phone number.';
+      }
+    } else if (name === 'eventDate') {
+      const today = getTodayDateString();
+      if (!value) {
+        errMsg = 'Event date is required.';
+      } else if (value < today) {
+        errMsg = 'Venue bookings cannot be set for past days.';
+      }
+    } else if (name === 'guestCount') {
+      if (!value) {
+        errMsg = 'Please enter estimated guest count.';
+      } else if (!/^\d+$/.test(value)) {
+        errMsg = 'Estimated guests count must be a numeric value.';
+      }
+    }
+    setErrors(prev => ({ ...prev, [name]: errMsg }));
+    return !errMsg;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'eventDate') {
+      validateField('eventDate', value);
+    }
+  };
+
+  const handleGuestChange = (e) => {
+    const { value } = e.target;
+    // Strip non-digit characters so user cannot type string characters
+    const cleanValue = value.replace(/\D/g, '');
+    setFormData(prev => ({ ...prev, guestCount: cleanValue }));
+    
+    if (!cleanValue) {
+      setErrors(prev => ({ ...prev, guestCount: 'Guest count is required.' }));
+    } else {
+      setErrors(prev => ({ ...prev, guestCount: '' }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate phone, event date, guest count
+    const isPhoneValid = validateField('phone', formData.phone);
+    const isDateValid = validateField('eventDate', formData.eventDate);
+    const isGuestsValid = validateField('guestCount', formData.guestCount);
+
+    if (!isPhoneValid || !isDateValid || !isGuestsValid) {
+      setStatus({
+        loading: false,
+        success: null,
+        error: 'Please correct the validation errors below before submitting.'
+      });
+      return;
+    }
+
     setStatus({ loading: true, success: null, error: null });
 
     try {
-      const response = await fetch('/api/contact', {
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${baseUrl}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -47,9 +122,10 @@ const ContactForm = ({ selectedDate }) => {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        showToast('Thank you! Your enquiry has been submitted successfully. Our team will contact you shortly.', 'success');
         setStatus({
           loading: false,
-          success: 'Thank you! Your enquiry has been submitted successfully. Our team will contact you shortly.',
+          success: null,
           error: null
         });
         setFormData({
@@ -61,6 +137,11 @@ const ContactForm = ({ selectedDate }) => {
           guestCount: '',
           eventType: 'Wedding Ceremony',
           message: ''
+        });
+        setErrors({
+          phone: '',
+          eventDate: '',
+          guestCount: ''
         });
       } else {
         setStatus({
@@ -207,15 +288,43 @@ const ContactForm = ({ selectedDate }) => {
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    required
+                  <PhoneInput
+                    country={'in'}
                     value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+91 98765 00000"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                    onChange={(phone) => {
+                      setFormData(prev => ({ ...prev, phone }));
+                      if (phone.length < 10) {
+                        setErrors(prev => ({ ...prev, phone: 'Please enter a valid phone number with country code.' }));
+                      } else {
+                        setErrors(prev => ({ ...prev, phone: '' }));
+                      }
+                    }}
+                    inputStyle={{
+                      width: '100%',
+                      height: '46px',
+                      borderRadius: '12px',
+                      border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                      fontSize: '14px',
+                      paddingLeft: '48px',
+                      outline: 'none',
+                      fontFamily: 'sans-serif'
+                    }}
+                    buttonStyle={{
+                      borderTopLeftRadius: '12px',
+                      borderBottomLeftRadius: '12px',
+                      border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                      borderRight: 'none',
+                      backgroundColor: 'transparent'
+                    }}
+                    containerStyle={{
+                      width: '100%'
+                    }}
                   />
+                  {errors.phone && (
+                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                      {errors.phone}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -244,7 +353,7 @@ const ContactForm = ({ selectedDate }) => {
                     name="eventType"
                     value={formData.eventType}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all bg-white"
+                    className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all bg-white"
                   >
                     <option value="Wedding Ceremony">Wedding Ceremony</option>
                     <option value="Grand Reception">Grand Reception</option>
@@ -281,24 +390,40 @@ const ContactForm = ({ selectedDate }) => {
                     type="date"
                     name="eventDate"
                     required
+                    min={getTodayDateString()}
                     value={formData.eventDate}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                    className={`w-full px-4 py-3 rounded-xl border outline-none text-sm transition-all ${
+                      errors.eventDate ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-royal-gold focus:ring-royal-gold/20'
+                    } focus:ring-2`}
                   />
+                  {errors.eventDate && (
+                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                      {errors.eventDate}
+                    </span>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Estimated Guests
+                    Estimated Guests <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     name="guestCount"
+                    required
                     value={formData.guestCount}
-                    onChange={handleChange}
-                    placeholder="e.g. 500 - 1000 Guests"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                    onChange={handleGuestChange}
+                    placeholder="e.g. 500"
+                    className={`w-full px-4 py-3 rounded-xl border outline-none text-sm transition-all ${
+                      errors.guestCount ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-royal-gold focus:ring-royal-gold/20'
+                    } focus:ring-2`}
                   />
+                  {errors.guestCount && (
+                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                      {errors.guestCount}
+                    </span>
+                  )}
                 </div>
               </div>
 

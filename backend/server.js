@@ -4,6 +4,10 @@ require('dotenv').config();
 
 const contactRoutes = require('./routes/contactRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const { initializeDatabase } = require('./config/db');
+
+// Run database migrations/initialization
+initializeDatabase();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
