@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 
 const AdminLoginModal = ({ isOpen, onClose }) => {
   const { login } = useAuth();
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -84,6 +84,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
+                autoComplete="off"
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
               />
             </div>
@@ -101,6 +102,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="new-password"
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
               />
             </div>

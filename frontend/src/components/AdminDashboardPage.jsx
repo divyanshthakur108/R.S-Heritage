@@ -9,8 +9,8 @@ const AdminDashboardPage = () => {
   const { showToast } = useToast();
   
   // Login states (used if not authenticated)
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
   const [loggingIn, setLoggingIn] = useState(false);
 
@@ -271,6 +271,8 @@ const AdminDashboardPage = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter Username"
+                  autoComplete="off"
                   className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
                 />
               </div>
@@ -284,6 +286,8 @@ const AdminDashboardPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter Password"
+                  autoComplete="new-password"
                   className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
                 />
               </div>
