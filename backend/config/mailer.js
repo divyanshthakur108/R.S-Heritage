@@ -4,6 +4,7 @@ const createTransporter = async () => {
   const user = (process.env.EMAIL_USER || process.env.SMTP_USER || '').trim();
   const rawPass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || '');
   const pass = rawPass.replace(/\s+/g, ''); // strip spaces from Gmail App Password
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
   const isGmail = host.includes('gmail') || !process.env.SMTP_HOST;
   const targetHost = isGmail ? 'smtp.gmail.com' : host;
   const targetPort = isGmail ? 465 : parseInt(process.env.SMTP_PORT || '465', 10);
