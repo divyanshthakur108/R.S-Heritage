@@ -1,18 +1,31 @@
 const nodemailer = require('nodemailer');
 
 const createTransporter = async () => {
-  const user = process.env.EMAIL_USER || process.env.SMTP_USER || 'divyanshthakur327@gmail.com';
-  const pass = process.env.EMAIL_PASS || process.env.SMTP_PASS;
+  const user = (process.env.EMAIL_USER || process.env.SMTP_USER || '').trim();
+  const rawPass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || '');
+  const pass = rawPass.replace(/\s+/g, ''); // strip spaces from Gmail App Password
+  const isGmail = host.includes('gmail') || !process.env.SMTP_HOST;
+  const targetHost = isGmail ? 'smtp.gmail.com' : host;
+  const targetPort = isGmail ? 465 : parseInt(process.env.SMTP_PORT || '465', 10);
+  const isSecure = targetPort === 465;
 
-  // 1. Authenticate with Gmail SMTP service using EMAIL_USER and EMAIL_PASS
-  if (user && pass && pass.trim().length > 0) {
+  // 1. Authenticate with Gmail/Custom SMTP service if credentials present
+  if (user && pass && pass.length > 0) {
     return {
       transporter: nodemailer.createTransport({
-        service: 'gmail',
+        host: targetHost,
+        port: targetPort,
+        secure: isSecure,
         auth: {
-          user: user.trim(),
-          pass: pass.trim()
-        }
+          user: user,
+          pass: pass
+        },
+        tls: {
+          rejectUnauthorized: false
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000
       }),
       isEthereal: false
     };
