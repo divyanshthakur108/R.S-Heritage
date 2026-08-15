@@ -23,7 +23,7 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
     setApiError(null);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const response = await fetch(`${baseUrl}/api/admin/availability`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -49,7 +49,7 @@ const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
     if (!isAdmin || !token) return;
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const response = await fetch(`${baseUrl}/api/admin/availability`, {
         method: 'POST',
         headers: {

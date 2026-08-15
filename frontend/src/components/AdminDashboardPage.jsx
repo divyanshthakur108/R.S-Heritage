@@ -31,7 +31,7 @@ const AdminDashboardPage = () => {
     setError(null);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       
       // Fetch Bookings
       const bookingsRes = await fetch(`${baseUrl}/api/admin/bookings`, {
@@ -85,7 +85,7 @@ const AdminDashboardPage = () => {
     setUpdatingAvailability(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const response = await fetch(`${baseUrl}/api/admin/availability`, {
         method: 'POST',
         headers: {

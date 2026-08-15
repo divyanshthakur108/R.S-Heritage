@@ -41,9 +41,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Start Express Server
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`✨ R.S Heritage Server running on http://localhost:${PORT}`);
-  console.log(`📧 Contact API available at http://localhost:${PORT}/api/contact`);
-  console.log(`=======================================================`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`✨ R.S Heritage Server running on http://localhost:${PORT}`);
+    console.log(`📧 Contact API available at http://localhost:${PORT}/api/contact`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = app;
+

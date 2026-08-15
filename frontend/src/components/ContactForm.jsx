@@ -110,7 +110,7 @@ const ContactForm = ({ selectedDate }) => {
     setStatus({ loading: true, success: null, error: null });
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const response = await fetch(`${baseUrl}/api/contact`, {
         method: 'POST',
         headers: {
