@@ -23,7 +23,7 @@ const AboutUs = () => {
             <div className="absolute -bottom-8 -right-4 sm:right-6 z-20 bg-royal-emeraldDark text-white p-6 rounded-xl shadow-2xl border border-royal-gold/40 max-w-xs">
               <div className="flex items-center space-x-3 mb-2">
                 <Crown className="w-8 h-8 text-royal-gold" />
-                <span className="font-serif text-2xl font-bold text-royal-gold">10+ Years</span>
+                <span className="font-serif text-2xl font-bold text-royal-gold">2+ Years</span>
               </div>
               <p className="text-xs text-gray-300 leading-relaxed">
                 Of crafting unforgettable weddings, royal receptions, & cultural celebrations.

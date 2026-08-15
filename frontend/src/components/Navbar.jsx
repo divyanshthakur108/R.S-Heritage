@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Menu, X, Calendar, Crown, ShieldCheck, LogOut } from 'lucide-react';
+import { Phone, Menu, X, Calendar, Crown, ShieldCheck, LogOut, Instagram } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
 import { useAuth } from '../context/AuthContext';
 
@@ -147,6 +147,17 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
               <span>{VENUE_INFO.phonePrimary}</span>
             </a>
 
+            {/* Instagram Quick Link */}
+            <a
+              href="https://www.instagram.com/rs_heritage_eco_huts/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-full border border-royal-gold/30 hover:border-royal-gold/60 text-royal-goldLight hover:text-royal-gold bg-white/5 hover:bg-white/10 transition-colors shrink-0 flex items-center justify-center"
+              title="Follow us on Instagram"
+            >
+              <Instagram className="w-3.5 h-3.5" />
+            </a>
+
             {/* Primary CTA: Book Venue */}
             <button
               onClick={onBookNowClick}
@@ -231,6 +242,16 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             >
               <Phone className="w-4 h-4 text-royal-gold" />
               <span>{VENUE_INFO.phonePrimary}</span>
+            </a>
+
+            <a
+              href="https://www.instagram.com/rs_heritage_eco_huts/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center space-x-2 text-royal-goldLight py-2 text-sm font-medium hover:text-royal-gold transition-colors"
+            >
+              <Instagram className="w-4 h-4 text-royal-gold" />
+              <span>Follow on Instagram</span>
             </a>
 
             <button

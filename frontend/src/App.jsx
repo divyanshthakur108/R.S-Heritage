@@ -20,10 +20,6 @@ function MainAppLayout() {
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
 
-  if (isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const scrollToContact = () => {
     const contactSection = document.getElementById('contact');
     if (contactSection) {

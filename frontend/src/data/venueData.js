@@ -1,11 +1,11 @@
 export const VENUE_INFO = {
   name: "R.S Heritage Eco Huts",
   tagline: "Where Royal Traditions Meet Modern Grandeur",
-  phonePrimary: "+91 73475 67108",
-  phoneSecondary: "+91 73475 67108",
+  phonePrimary: "+91 82648 25706",
+  phoneSecondary: "+91 82648 25706",
   email: "divyanshthakur327@gmail.com",
   address: "Hajipur, opposite Aryan Jcb Spare Parts, Road, Talwara, Depur, Punjab 144222",
-  googleMapsUrl: "https://www.google.com/maps/place/R.S.+Heritage+Eco+Huts/@31.9654524,75.7922154,17z/data=!3m1!4b1!4m6!3m5!1s0x391b757c0f087249:0x14e0e3bcde4864a5!8m2!3d31.9654524!4d75.7922154",
+  googleMapsUrl: "https://www.google.com/maps/place/R.S.+Heritage+Eco+Huts/@31.9655901,75.7909654,15.75z/data=!4m6!3m5!1s0x391b757c0f087249:0x14e0e3bcde4864a5!8m2!3d31.9654524!4d75.7922154",
   capacityMax: "2,500+ Guests",
   lawnArea: "65,000 Sq. Ft.",
   parkingCapacity: "350+ Vehicles",
@@ -18,7 +18,7 @@ export const RESORTS_DATA = [
     subtitle: "Sprawling Lush Green Open-Air Venue",
     capacity: "500 - 2,500 Guests",
     size: "45,000 Sq. Ft.",
-    image: "/about-building.jpg",
+    image: "/royal-lawn.jpg",
     description: "Immerse your celebration in royal splendor under starry skies. Featuring handcrafted marigold arches, grand entry pathway, and LED ambient illumination.",
     highlights: ["State-of-the-art Sound System", "Custom Mandap Decor Setup", "Dedicated Live Counter Zone", "High Capacity Power Backup"]
   },
@@ -26,9 +26,9 @@ export const RESORTS_DATA = [
     id: "heritage-banquet",
     name: "Imperial Heritage Banquet Hall",
     subtitle: "Air-Conditioned Crystal Chandelier Hall",
-    capacity: "200 - 800 Guests",
+    capacity: "200 - 2,000 Guests",
     size: "18,000 Sq. Ft.",
-    image: "/banquet-hall.jpg",
+    image: "/banquet-dining.jpg",
     description: "An architectural masterpiece adorned with Venetian crystal chandeliers, marble flooring, and climate-controlled luxury for intimate & grand banquets.",
     highlights: ["100% Central AC", "Customizable Stage & Lighting", "Private VIP Dining Lounge", "In-built Acoustic Panels"]
   },
@@ -48,7 +48,7 @@ export const RESORTS_DATA = [
     subtitle: "24 Executive Rooms & AC Preparation Suites",
     capacity: "50+ Stay Capacity",
     size: "24 Rooms",
-    image: "/banquet-dining.jpg",
+    image: "/active-fountain.jpg",
     description: "Sumptuous air-conditioned bridal dressing suites and executive guest rooms ensuring full comfort for the wedding family and special guests.",
     highlights: ["Full Makeup Vanities", "24/7 Room Service", "Private Locker Storage", "En-suite Luxury Bathrooms"]
   }

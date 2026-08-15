@@ -135,6 +135,17 @@ router.get('/bookings', verifyToken, requireAdmin, async (req, res) => {
 router.delete('/bookings/:id', verifyToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Find the date of the booking before deleting to clean up availability override
+    const bookingRes = await query('SELECT event_date FROM bookings WHERE id = $1', [id]);
+    if (bookingRes.rows.length > 0) {
+      const eventDate = bookingRes.rows[0].event_date;
+      if (eventDate) {
+        const dateStr = new Date(eventDate).toISOString().split('T')[0];
+        await query('DELETE FROM availability WHERE date_str = $1 AND status = $2', [dateStr, 'booked']);
+      }
+    }
+
     await query('DELETE FROM bookings WHERE id = $1', [id]);
     return res.status(200).json({
       success: true,
@@ -162,10 +173,34 @@ router.put('/bookings/:id', verifyToken, requireAdmin, async (req, res) => {
       });
     }
 
+    // Get previous details to see if event date was changed or status unconfirmed
+    const oldRes = await query('SELECT event_date, status FROM bookings WHERE id = $1', [id]);
+
     await query(
       'UPDATE bookings SET name = $1, email = $2, phone = $3, location = $4, event_date = $5, guest_count = $6, event_type = $7, message = $8, status = $9 WHERE id = $10',
       [name, email, phone, location, event_date, guest_count, event_type, message, status || 'pending', id]
     );
+
+    // Sync changes with availability table
+    if (oldRes.rows.length > 0) {
+      const oldDate = oldRes.rows[0].event_date;
+      const oldStatus = oldRes.rows[0].status;
+
+      // Clean up previous event date booking if it changed or is no longer confirmed
+      if (oldDate && (oldDate !== event_date || status !== 'confirmed') && oldStatus === 'confirmed') {
+        const oldDateStr = new Date(oldDate).toISOString().split('T')[0];
+        await query('DELETE FROM availability WHERE date_str = $1 AND status = $2', [oldDateStr, 'booked']);
+      }
+    }
+
+    // Set new event date as booked if status is confirmed
+    if (status === 'confirmed' && event_date) {
+      const dateStr = new Date(event_date).toISOString().split('T')[0];
+      await query(
+        'INSERT INTO availability (date_str, status) VALUES ($1, $2) ON CONFLICT (date_str) DO UPDATE SET status = EXCLUDED.status',
+        [dateStr, 'booked']
+      );
+    }
 
     return res.status(200).json({
       success: true,
@@ -184,7 +219,30 @@ router.put('/bookings/:id', verifyToken, requireAdmin, async (req, res) => {
 router.patch('/bookings/:id/confirm', verifyToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Get the booking details to find the event_date
+    const bookingRes = await query('SELECT event_date FROM bookings WHERE id = $1', [id]);
+    if (bookingRes.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Booking not found'
+      });
+    }
+
+    const eventDate = bookingRes.rows[0].event_date;
+
+    // Update booking status to confirmed
     await query("UPDATE bookings SET status = 'confirmed' WHERE id = $1", [id]);
+
+    // Upsert into availability table as booked
+    if (eventDate) {
+      const dateStr = new Date(eventDate).toISOString().split('T')[0];
+      await query(
+        'INSERT INTO availability (date_str, status) VALUES ($1, $2) ON CONFLICT (date_str) DO UPDATE SET status = EXCLUDED.status',
+        [dateStr, 'booked']
+      );
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Booking status updated to confirmed'

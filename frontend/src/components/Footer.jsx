@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crown, Phone, Mail, MapPin, ExternalLink, Heart } from 'lucide-react';
+import { Crown, Phone, Mail, MapPin, ExternalLink, Heart, Instagram } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
 
 const Footer = () => {
@@ -81,6 +81,16 @@ const Footer = () => {
               <span>View Location on Google Maps</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
+
+            <a
+              href="https://www.instagram.com/rs_heritage_eco_huts/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 w-full py-2.5 rounded-xl border border-royal-gold/40 hover:border-royal-gold text-royal-goldLight hover:text-royal-gold bg-royal-gold/5 hover:bg-royal-gold/10 transition-all flex items-center justify-center space-x-2 shadow-sm font-semibold text-xs uppercase tracking-wider"
+            >
+              <Instagram className="w-4 h-4" />
+              <span>Follow on Instagram</span>
+            </a>
           </div>
 
         </div>
@@ -91,7 +101,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} R.S Heritage Marriage & Event Venue. All Rights Reserved.</p>
           <p className="flex items-center space-x-1">
-            <span>Crafted with royal elegance for your special moments</span>
+            <span>Developed by DIVYANSH THAKUR</span>
             <Heart className="w-3.5 h-3.5 text-royal-gold inline fill-royal-gold" />
           </p>
         </div>

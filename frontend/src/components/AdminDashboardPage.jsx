@@ -412,7 +412,7 @@ const AdminDashboardPage = () => {
             <div>
               <span className="text-xs text-gray-500 font-medium uppercase tracking-wider block">Booked Dates</span>
               <span className="text-2xl font-bold text-royal-emeraldDark">
-                {Object.values(availability).filter(s => s === 'booked').length} Reserved
+                {bookings.filter(b => b.status === 'confirmed').length} Reserved
               </span>
             </div>
           </div>
@@ -420,57 +420,9 @@ const AdminDashboardPage = () => {
 
         {/* Middle split: Availability manager (left) + error indicator (right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Availability Manager Form (Col span 5) */}
-          <div className="lg:col-span-4 bg-royal-emeraldDark text-white p-6 rounded-3xl border border-royal-gold/30 shadow-lg space-y-6 relative z-30">
-            <div className="flex items-center space-x-2 border-b border-white/10 pb-3">
-              <PlusCircle className="w-5 h-5 text-royal-gold" />
-              <h3 className="font-serif text-lg font-bold text-gold-gradient">
-                Set Venue Availability
-              </h3>
-            </div>
 
-            <form onSubmit={handleUpdateAvailability} className="space-y-4 relative z-40">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-royal-goldLight mb-1.5">
-                  Select Target Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={targetDate}
-                  onChange={(e) => setTargetDate(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white"
-                />
-              </div>
-
-              <div className="relative z-50">
-                <label className="block text-xs font-bold uppercase tracking-wider text-royal-goldLight mb-1.5">
-                  Availability Status
-                </label>
-                <select
-                  value={targetStatus}
-                  onChange={(e) => setTargetStatus(e.target.value)}
-                  className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-royal-emeraldLight border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white relative z-50"
-                >
-                  <option value="available" className="bg-royal-emeraldDark text-white">Available (Green)</option>
-                  <option value="fast-filling" className="bg-royal-emeraldDark text-white">Fast Filling (Amber)</option>
-                  <option value="booked" className="bg-royal-emeraldDark text-white">Booked / Reserved (Red)</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                disabled={updatingAvailability}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-royal-gold to-royal-goldDark text-royal-emeraldDark font-bold text-xs uppercase tracking-wider shadow-glow hover:brightness-110"
-              >
-                {updatingAvailability ? 'Updating Neon DB...' : 'Update Status in DB'}
-              </button>
-            </form>
-          </div>
-
-          {/* Bookings log table (Col span 8) */}
-          <div className="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl border border-royal-gold/20 shadow-lg space-y-6">
+          {/* Bookings log table (Col span 12) */}
+          <div className="lg:col-span-12 bg-white p-6 sm:p-8 rounded-3xl border border-royal-gold/20 shadow-lg space-y-6">
             <div className="flex items-center justify-between border-b border-gray-200 pb-3">
               <h3 className="font-serif text-lg font-bold text-royal-emeraldDark">
                 Customer Inquiries Log Table

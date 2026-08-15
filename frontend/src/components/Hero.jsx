@@ -12,7 +12,7 @@ const Hero = ({ onBookNowClick, onOpenAdminCalendar }) => {
       
       {/* Layer 0: Sharp & Crisp R.S Heritage Venue Background Image (100% Opacity) */}
       <img
-        src="/hero-bg.png"
+        src="/hero-bg.jpg"
         alt="R.S Heritage Royal Marriage Venue"
         className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
       />
