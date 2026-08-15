@@ -74,8 +74,7 @@ const initializeDatabase = async () => {
     }
 
   } catch (error) {
-    console.error('❌ Database initialization error:', error);
-    process.exit(1);
+    console.error('❌ Database initialization error:', error.message);
   }
 };
 
