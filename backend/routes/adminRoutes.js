@@ -131,4 +131,71 @@ router.get('/bookings', verifyToken, requireAdmin, async (req, res) => {
   }
 });
 
+// Protected Admin Booking DELETE Endpoint
+router.delete('/bookings/:id', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await query('DELETE FROM bookings WHERE id = $1', [id]);
+    return res.status(200).json({
+      success: true,
+      message: 'Booking deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete booking API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to delete booking from database'
+    });
+  }
+});
+
+// Protected Admin Booking PUT (Edit) Endpoint
+router.put('/bookings/:id', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, location, event_date, guest_count, event_type, message, status } = req.body;
+
+    if (!name || !email || !phone || !event_date || !event_type) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please fill in all required fields: Name, Email, Phone, Event Date, and Event Type.'
+      });
+    }
+
+    await query(
+      'UPDATE bookings SET name = $1, email = $2, phone = $3, location = $4, event_date = $5, guest_count = $6, event_type = $7, message = $8, status = $9 WHERE id = $10',
+      [name, email, phone, location, event_date, guest_count, event_type, message, status || 'pending', id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Booking updated successfully'
+    });
+  } catch (error) {
+    console.error('Update booking API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to update booking in database'
+    });
+  }
+});
+
+// Protected Admin Booking PATCH (Confirm) Endpoint
+router.patch('/bookings/:id/confirm', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await query("UPDATE bookings SET status = 'confirmed' WHERE id = $1", [id]);
+    return res.status(200).json({
+      success: true,
+      message: 'Booking status updated to confirmed'
+    });
+  } catch (error) {
+    console.error('Confirm booking API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to update booking status to confirmed'
+    });
+  }
+});
+
 module.exports = router;

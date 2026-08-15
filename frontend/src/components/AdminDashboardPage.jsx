@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import CommonTable from './CommonTable';
-import { ShieldCheck, Mail, Phone, Calendar, Users, MapPin, MessageSquare, Clock, RefreshCw, AlertCircle, LogOut, ArrowLeft, PlusCircle } from 'lucide-react';
+import { ShieldCheck, Mail, Phone, Calendar, Users, MapPin, MessageSquare, Clock, RefreshCw, AlertCircle, LogOut, ArrowLeft, PlusCircle, Check, Edit, Trash2 } from 'lucide-react';
 
 const AdminDashboardPage = () => {
   const { token, isAdmin, login, logout } = useAuth();
@@ -24,6 +24,15 @@ const AdminDashboardPage = () => {
   const [targetDate, setTargetDate] = useState('');
   const [targetStatus, setTargetStatus] = useState('available');
   const [updatingAvailability, setUpdatingAvailability] = useState(false);
+
+  // Edit & Delete Dialog States
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deletingBookingId, setDeletingBookingId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchDashboardData = async () => {
     if (!isAdmin || !token) return;
@@ -112,6 +121,120 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const handleConfirmBooking = async (id) => {
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/api/admin/bookings/${id}/confirm`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        showToast('Booking status updated to confirmed!', 'success');
+        fetchDashboardData();
+      } else {
+        showToast(data.error || 'Failed to confirm booking.', 'error');
+      }
+    } catch (err) {
+      console.error('Confirm booking error:', err);
+      showToast('Connection error confirming booking.', 'error');
+    }
+  };
+
+  const confirmDeleteBooking = async () => {
+    if (!deletingBookingId) return;
+    setDeleting(true);
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/api/admin/bookings/${deletingBookingId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        showToast('Booking deleted successfully.', 'success');
+        setIsDeleteOpen(false);
+        setDeletingBookingId(null);
+        fetchDashboardData();
+      } else {
+        showToast(data.error || 'Failed to delete booking.', 'error');
+      }
+    } catch (err) {
+      console.error('Delete booking error:', err);
+      showToast('Connection error deleting booking.', 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleEditBookingSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingBooking) return;
+    setSavingEdit(true);
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/api/admin/bookings/${editingBooking.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: editingBooking.name,
+          email: editingBooking.email,
+          phone: editingBooking.phone,
+          location: editingBooking.location,
+          event_date: editingBooking.event_date,
+          guest_count: editingBooking.guest_count,
+          event_type: editingBooking.event_type,
+          message: editingBooking.message,
+          status: editingBooking.status
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        showToast('Booking details updated successfully.', 'success');
+        setIsEditOpen(false);
+        setEditingBooking(null);
+        fetchDashboardData();
+      } else {
+        showToast(data.error || 'Failed to update booking.', 'error');
+      }
+    } catch (err) {
+      console.error('Update booking error:', err);
+      showToast('Connection error updating booking.', 'error');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const openEditModal = (booking) => {
+    setEditingBooking({ ...booking });
+    setIsEditOpen(true);
+  };
+
+  const openDeleteModal = (id) => {
+    setDeletingBookingId(id);
+    setIsDeleteOpen(true);
+  };
+
+  const formatDateForInput = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } catch (e) {
+      return '';
+    }
+  };
+
   // --- RENDERING ADMIN LOGIN FORM (If not authenticated) ---
   if (!isAdmin) {
     return (
@@ -192,7 +315,8 @@ const AdminDashboardPage = () => {
     'Client / Contact',
     'Event Details',
     'Message / Requirements',
-    'Submitted On'
+    'Submitted On',
+    'Actions'
   ];
 
   const formatDate = (dateStr) => {
@@ -432,6 +556,42 @@ const AdminDashboardPage = () => {
                     <td className="px-4 py-3 align-top whitespace-nowrap text-xs text-gray-400">
                       <span>{formatDate(row.created_at)}</span>
                     </td>
+
+                    {/* Actions */}
+                    <td className="px-4 py-3 align-top whitespace-nowrap">
+                      <div className="flex items-center space-x-1.5">
+                        {row.status === 'confirmed' ? (
+                          <span className="inline-flex items-center space-x-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-lg">
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Confirmed</span>
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleConfirmBooking(row.id)}
+                            className="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center space-x-1"
+                          >
+                            <Check className="w-3 h-3" />
+                            <span>Confirm</span>
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => openEditModal(row)}
+                          className="p-1 rounded-lg border border-royal-gold/30 hover:border-royal-gold text-royal-goldDark bg-royal-gold/5 hover:bg-royal-gold/15 transition-all"
+                          title="Edit Booking"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </button>
+
+                        <button
+                          onClick={() => openDeleteModal(row.id)}
+                          className="p-1 rounded-lg border border-red-200 hover:border-red-500 text-red-600 bg-red-50 hover:bg-red-100 transition-all"
+                          title="Delete Booking"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
                   </>
                 )}
               />
@@ -446,6 +606,227 @@ const AdminDashboardPage = () => {
       <footer className="bg-royal-emeraldDark text-white/50 text-center py-6 text-xs border-t border-white/10 mt-auto">
         <p>© {new Date().getFullYear()} R.S Heritage Eco Huts Control Panel. Persistent via Neon Serverless Postgres.</p>
       </footer>
+
+      {/* Edit Modal */}
+      {isEditOpen && editingBooking && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-none">
+          <div className="bg-white rounded-3xl border border-royal-gold/30 shadow-2xl w-full max-w-2xl overflow-hidden transition-all duration-200">
+            {/* Modal Header */}
+            <div className="bg-royal-emeraldDark text-white px-6 py-4 border-b border-royal-gold/30 flex items-center justify-between">
+              <h3 className="font-serif text-lg font-bold text-gold-gradient">
+                Edit Customer Inquiry Details
+              </h3>
+              <button
+                onClick={() => setIsEditOpen(false)}
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleEditBookingSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Client Name */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Client Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingBooking.name}
+                    onChange={(e) => setEditingBooking({...editingBooking, name: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Email Address */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={editingBooking.email}
+                    onChange={(e) => setEditingBooking({...editingBooking, email: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingBooking.phone}
+                    onChange={(e) => setEditingBooking({...editingBooking, phone: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBooking.location || ''}
+                    onChange={(e) => setEditingBooking({...editingBooking, location: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Event Date */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Event Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={formatDateForInput(editingBooking.event_date)}
+                    onChange={(e) => setEditingBooking({...editingBooking, event_date: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Guest Count */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Guest Count
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBooking.guest_count || ''}
+                    onChange={(e) => setEditingBooking({...editingBooking, guest_count: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  />
+                </div>
+
+                {/* Event Type */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Event Type *
+                  </label>
+                  <select
+                    value={editingBooking.event_type}
+                    onChange={(e) => setEditingBooking({...editingBooking, event_type: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  >
+                    <option value="Wedding Ceremony">Wedding Ceremony</option>
+                    <option value="Reception Party">Reception Party</option>
+                    <option value="Pre-Wedding Event">Pre-Wedding Event</option>
+                    <option value="Corporate Event">Corporate Event</option>
+                    <option value="Birthday Celebration">Birthday Celebration</option>
+                    <option value="Other Function">Other Function</option>
+                  </select>
+                </div>
+
+                {/* Booking Status */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                    Status
+                  </label>
+                  <select
+                    value={editingBooking.status || 'pending'}
+                    onChange={(e) => setEditingBooking({...editingBooking, status: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Message */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-royal-emeraldDark mb-1">
+                  Requirements / Message
+                </label>
+                <textarea
+                  value={editingBooking.message || ''}
+                  onChange={(e) => setEditingBooking({...editingBooking, message: e.target.value})}
+                  rows="3"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-royal-gold outline-none text-sm text-gray-800 resize-none"
+                ></textarea>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3 border-t border-gray-100 pt-4 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-semibold text-xs uppercase tracking-wider hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-royal-gold to-royal-goldDark text-royal-emeraldDark font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md"
+                >
+                  {savingEdit ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteOpen && deletingBookingId && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-red-200 shadow-2xl w-full max-w-md overflow-hidden transition-all duration-200">
+            {/* Header */}
+            <div className="bg-red-50 text-red-800 px-6 py-4 border-b border-red-100 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <h3 className="font-serif text-base font-bold">
+                  Delete Inquiry
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsDeleteOpen(false)}
+                className="text-red-500 hover:text-red-700 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Are you sure you want to delete this customer inquiry? This action cannot be undone and will permanently remove the record from the database.
+              </p>
+
+              {/* Buttons */}
+              <div className="flex justify-end space-x-3 mt-6 border-t border-gray-100 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-semibold text-xs uppercase tracking-wider hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDeleteBooking}
+                  disabled={deleting}
+                  className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-red-700 active:scale-98 transition-all shadow-md"
+                >
+                  {deleting ? 'Deleting...' : 'Delete Permanently'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

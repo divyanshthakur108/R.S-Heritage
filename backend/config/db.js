@@ -48,6 +48,12 @@ const initializeDatabase = async () => {
     `);
     console.log('📋 Verified "bookings" table exists.');
 
+    // Add status column if not exists
+    await query(`
+      ALTER TABLE bookings ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending';
+    `);
+    console.log('📋 Verified "status" column exists in bookings table.');
+
     // 3. Create Availability Table
     await query(`
       CREATE TABLE IF NOT EXISTS availability (
