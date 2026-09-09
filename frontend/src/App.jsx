@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import CalendarModal from './components/CalendarModal';
 import AdminLoginModal from './components/AdminLoginModal';
 import AdminDashboardPage from './components/AdminDashboardPage';
+import StickyContactButtons from './components/StickyContactButtons';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 
@@ -33,13 +34,13 @@ function MainAppLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-royal-cream text-gray-900 font-sans">
+    <div className="w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0c0e] text-gray-100 font-sans">
       <Navbar 
         onBookNowClick={scrollToContact} 
         onOpenCalendar={() => setIsCalendarOpen(true)} 
         onOpenAdminLogin={() => window.location.href = '/dashboard'}
       />
-      <main>
+      <main className="w-full max-w-full overflow-x-hidden">
         <Hero 
           onBookNowClick={scrollToContact} 
           onOpenAdminCalendar={() => setIsCalendarOpen(true)}
@@ -52,6 +53,8 @@ function MainAppLayout() {
       </main>
       
       <Footer />
+
+      <StickyContactButtons />
 
       <CalendarModal
         isOpen={isCalendarOpen}

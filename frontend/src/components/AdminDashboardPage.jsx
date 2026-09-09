@@ -19,6 +19,25 @@ const AdminDashboardPage = () => {
   const [availability, setAvailability] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const filteredBookings = bookings.filter(booking => {
+    const matchesSearch = 
+      !searchTerm ||
+      booking.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.phone?.includes(searchTerm) ||
+      booking.event_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.location?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = 
+      statusFilter === 'all' ||
+      (statusFilter === 'confirmed' && booking.status === 'confirmed') ||
+      (statusFilter === 'pending' && booking.status !== 'confirmed');
+
+    return matchesSearch && matchesStatus;
+  });
 
   // Availability form state
   const [targetDate, setTargetDate] = useState('');
@@ -376,6 +395,32 @@ const AdminDashboardPage = () => {
               </button>
             </div>
 
+            {/* Search & Filter Controls */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by client name, email, phone, event or location..."
+                  className="w-full px-4 py-2 rounded-xl bg-white border border-gray-300 focus:border-royal-emeraldDark focus:ring-1 focus:ring-royal-emeraldDark outline-none text-xs sm:text-sm text-gray-800 transition-all"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500 font-medium shrink-0">Filter Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-3 py-2 rounded-xl bg-white border border-gray-300 text-xs text-gray-800 font-medium focus:border-royal-emeraldDark outline-none"
+                >
+                  <option value="all">All Inquiries ({bookings.length})</option>
+                  <option value="pending">Pending Only ({bookings.filter(b => b.status !== 'confirmed').length})</option>
+                  <option value="confirmed">Confirmed Only ({bookings.filter(b => b.status === 'confirmed').length})</option>
+                </select>
+              </div>
+            </div>
+
             {error && (
               <div className="p-4 rounded-xl bg-red-50 border border-red-300 text-red-800 flex items-start space-x-3">
                 <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
@@ -391,8 +436,8 @@ const AdminDashboardPage = () => {
             ) : (
               <CommonTable
                 headers={headers}
-                data={bookings}
-                emptyMessage="No booking inquiries submitted yet."
+                data={filteredBookings}
+                emptyMessage="No booking inquiries match your search criteria."
                 renderRow={(row) => (
                   <>
                     {/* Client / Contact */}

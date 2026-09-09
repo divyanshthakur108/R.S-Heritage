@@ -6,36 +6,34 @@ import { useToast } from '../context/ToastContext';
 const CalendarModal = ({ isOpen, onClose, onDateSelect }) => {
   const { token, isAdmin } = useAuth();
   const { showToast } = useToast();
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // August 2026 default
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [availabilityMap, setAvailabilityMap] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
-    if (isOpen && isAdmin && token) {
-      fetchAdminAvailability();
+    if (isOpen) {
+      fetchAvailability();
     }
   }, [isOpen, isAdmin, token]);
 
-  const fetchAdminAvailability = async () => {
+  const fetchAvailability = async () => {
     setLoading(true);
     setApiError(null);
 
     try {
       const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-      const response = await fetch(`${baseUrl}/api/admin/availability`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const endpoint = (isAdmin && token) ? '/api/admin/availability' : '/api/availability';
+      const headers = (isAdmin && token) ? { 'Authorization': `Bearer ${token}` } : {};
 
+      const response = await fetch(`${baseUrl}${endpoint}`, { headers });
       const data = await response.json();
 
       if (response.ok && data.success) {
         setAvailabilityMap(data.availability || {});
       } else {
-        setApiError(data.error || 'Failed to fetch protected admin availability');
+        setApiError(data.error || 'Failed to fetch date availability');
       }
     } catch (err) {
       console.error('Fetch availability error:', err);

@@ -1,54 +1,55 @@
 import React from 'react';
-import { Crown, Phone, Mail, MapPin, ExternalLink, Heart, Instagram } from 'lucide-react';
+import { Phone, Mail, MapPin, ExternalLink, Heart, Instagram } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
 
 const Footer = () => {
   return (
-    <footer className="bg-royal-emeraldDark text-white border-t border-royal-gold/30">
-      
+    <footer className="regal-bg-pattern text-white border-t border-gold-line relative overflow-hidden w-full max-w-full">
+      <div className="regal-bg-overlay" />
+
       {/* Top Banner Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           
           {/* Col 1: Brand Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3.5">
-              <div className="w-12 h-12 rounded-full border-2 border-royal-gold overflow-hidden shadow-glow shrink-0 bg-royal-emeraldDark flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-11 h-11 rounded-full border border-gold overflow-hidden shadow-glow shrink-0 bg-bg-dark flex items-center justify-center">
                 <img src="/logo.jpg" alt="R.S Heritage Logo" className="w-full h-full object-cover" />
               </div>
-              <span className="font-serif text-2xl font-bold text-gold-gradient">
+              <span className="font-serif text-xl font-bold text-gold-light tracking-wider">
                 R.S HERITAGE
               </span>
             </div>
-            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+            <p className="font-garamond text-gray-300 text-base leading-relaxed">
               {VENUE_INFO.tagline}. Jaipur Road's premier destination for royal weddings, receptions, and memorable celebrations.
             </p>
           </div>
 
           {/* Col 2: Quick Links */}
           <div>
-            <h4 className="font-serif text-lg font-bold text-royal-gold mb-4 border-b border-royal-gold/20 pb-2 inline-block">
+            <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Quick Links
             </h4>
-            <ul className="space-y-2.5 text-sm text-gray-300">
-              <li><a href="#home" className="hover:text-royal-gold transition-colors">Home</a></li>
-              <li><a href="#about" className="hover:text-royal-gold transition-colors">About Us</a></li>
-              <li><a href="#resorts" className="hover:text-royal-gold transition-colors">Venues & Lawns</a></li>
-              <li><a href="#features" className="hover:text-royal-gold transition-colors">Services & Amenities</a></li>
-              <li><a href="#gallery" className="hover:text-royal-gold transition-colors">Photo Gallery</a></li>
-              <li><a href="#contact" className="hover:text-royal-gold transition-colors">Contact Us</a></li>
+            <ul className="space-y-2.5 font-garamond text-base text-gray-300">
+              <li><a href="#home" className="hover:text-gold transition-colors">Home</a></li>
+              <li><a href="#about" className="hover:text-gold transition-colors">About Us</a></li>
+              <li><a href="#resorts" className="hover:text-gold transition-colors">Venues & Lawns</a></li>
+              <li><a href="#features" className="hover:text-gold transition-colors">Services & Amenities</a></li>
+              <li><a href="#gallery" className="hover:text-gold transition-colors">Photo Gallery</a></li>
+              <li><a href="#contact" className="hover:text-gold transition-colors">Contact Us</a></li>
             </ul>
           </div>
 
           {/* Col 3: Venues */}
           <div>
-            <h4 className="font-serif text-lg font-bold text-royal-gold mb-4 border-b border-royal-gold/20 pb-2 inline-block">
+            <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Our Venues
             </h4>
-            <ul className="space-y-2.5 text-sm text-gray-300">
+            <ul className="space-y-2.5 font-garamond text-base text-gray-300">
               <li>Grand Royal Lawn (2500+ Capacity)</li>
               <li>Imperial Heritage Banquet Hall</li>
-              <li>Poolside Sundown Courtyard</li>
+              <li>Royal Grand Fountain Courtyard</li>
               <li>Bridal Preparation Suites</li>
               <li>Executive Guest Rooms</li>
             </ul>
@@ -56,40 +57,30 @@ const Footer = () => {
 
           {/* Col 4: Reach Us */}
           <div className="space-y-3">
-            <h4 className="font-serif text-lg font-bold text-royal-gold mb-4 border-b border-royal-gold/20 pb-2 inline-block">
+            <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Connect With Us
             </h4>
-            <div className="flex items-start space-x-3 text-sm text-gray-300">
-              <MapPin className="w-4 h-4 text-royal-gold shrink-0 mt-1" />
-              <span className="text-xs">{VENUE_INFO.address}</span>
+            <div className="flex items-start space-x-3 font-garamond text-base text-gray-300">
+              <MapPin className="w-4 h-4 text-gold shrink-0 mt-1" />
+              <span className="text-xs font-sans text-gray-300">{VENUE_INFO.address}</span>
             </div>
             <div className="flex items-center space-x-3 text-sm text-gray-300">
-              <Phone className="w-4 h-4 text-royal-gold shrink-0" />
-              <a href={`tel:${VENUE_INFO.phonePrimary}`} className="text-xs hover:text-royal-gold">{VENUE_INFO.phonePrimary}</a>
+              <Phone className="w-4 h-4 text-gold shrink-0" />
+              <a href={`tel:${VENUE_INFO.phonePrimary}`} className="text-xs font-sans hover:text-gold">{VENUE_INFO.phonePrimary}</a>
             </div>
             <div className="flex items-center space-x-3 text-sm text-gray-300">
-              <Mail className="w-4 h-4 text-royal-gold shrink-0" />
-              <a href={`mailto:${VENUE_INFO.email}`} className="text-xs hover:text-royal-gold">{VENUE_INFO.email}</a>
+              <Mail className="w-4 h-4 text-gold shrink-0" />
+              <a href={`mailto:${VENUE_INFO.email}`} className="text-xs font-sans hover:text-gold">{VENUE_INFO.email}</a>
             </div>
 
             <a
               href={VENUE_INFO.googleMapsUrl || 'https://maps.google.com'}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 text-xs font-semibold text-royal-gold hover:underline pt-2"
+              className="inline-flex items-center space-x-2 text-xs font-sans font-semibold text-gold hover:underline pt-2"
             >
               <span>View Location on Google Maps</span>
               <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
-            <a
-              href="https://www.instagram.com/rs_heritage_eco_huts/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 w-full py-2.5 rounded-xl border border-royal-gold/40 hover:border-royal-gold text-royal-goldLight hover:text-royal-gold bg-royal-gold/5 hover:bg-royal-gold/10 transition-all flex items-center justify-center space-x-2 shadow-sm font-semibold text-xs uppercase tracking-wider"
-            >
-              <Instagram className="w-4 h-4" />
-              <span>Follow on Instagram</span>
             </a>
           </div>
 
@@ -97,12 +88,12 @@ const Footer = () => {
       </div>
 
       {/* Bottom Copyright */}
-      <div className="border-t border-white/10 py-6 text-center text-xs text-gray-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="border-t border-gold-line py-6 text-center text-xs text-gray-400 font-sans relative z-10">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} R.S Heritage Marriage & Event Venue. All Rights Reserved.</p>
           <p className="flex items-center space-x-1">
             <span>Developed by DIVYANSH THAKUR</span>
-            <Heart className="w-3.5 h-3.5 text-royal-gold inline fill-royal-gold" />
+            <Heart className="w-3.5 h-3.5 text-gold inline fill-gold" />
           </p>
         </div>
       </div>

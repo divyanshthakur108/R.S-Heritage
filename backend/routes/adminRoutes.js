@@ -4,32 +4,52 @@ const jwt = require('jsonwebtoken');
 const { verifyToken, requireAdmin, JWT_SECRET } = require('../middleware/authMiddleware');
 const { query } = require('../config/db');
 
+const bcrypt = require('bcryptjs');
+
 // Admin Login Endpoint
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide both username and password.'
+      });
+    }
+
     const result = await query(
-      'SELECT * FROM users WHERE username = $1 AND password = $2',
-      [username, password]
+      'SELECT * FROM users WHERE username = $1',
+      [username.trim()]
     );
 
     if (result.rows.length > 0) {
       const dbUser = result.rows[0];
-      const userPayload = {
-        id: dbUser.id,
-        username: dbUser.username,
-        role: dbUser.role
-      };
+      let isMatch = false;
 
-      const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '24h' });
+      // Check if password matches bcrypt hash or plain text fallback
+      if (dbUser.password.startsWith('$2a$') || dbUser.password.startsWith('$2b$')) {
+        isMatch = await bcrypt.compare(password, dbUser.password);
+      } else {
+        isMatch = (password === dbUser.password);
+      }
 
-      return res.status(200).json({
-        success: true,
-        message: 'Admin authentication successful',
-        token,
-        user: userPayload
-      });
+      if (isMatch) {
+        const userPayload = {
+          id: dbUser.id,
+          username: dbUser.username,
+          role: dbUser.role
+        };
+
+        const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '24h' });
+
+        return res.status(200).json({
+          success: true,
+          message: 'Admin authentication successful',
+          token,
+          user: userPayload
+        });
+      }
     }
 
     return res.status(401).json({

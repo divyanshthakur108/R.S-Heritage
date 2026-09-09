@@ -3,6 +3,9 @@ export const VENUE_INFO = {
   tagline: "Where Royal Traditions Meet Modern Grandeur",
   phonePrimary: "+91 82648 25706",
   phoneSecondary: "+91 82648 25706",
+  whatsappNumber: "+91 82648 25706",
+  whatsappUrl: "https://wa.me/918264825706?text=Hello!%20I%20would%20like%20to%20inquire%20about%20booking%20at%20R.S%20Heritage.",
+  instagramUrl: "https://www.instagram.com/r.s.heritageecohuts/?hl=en",
   email: "divyanshthakur327@gmail.com",
   address: "Hajipur, opposite Aryan Jcb Spare Parts, Road, Talwara, Depur, Punjab 144222",
   googleMapsUrl: "https://www.google.com/maps/place/R.S.+Heritage+Eco+Huts/@31.9655901,75.7909654,15.75z/data=!4m6!3m5!1s0x391b757c0f087249:0x14e0e3bcde4864a5!8m2!3d31.9654524!4d75.7922154",
@@ -33,14 +36,14 @@ export const RESORTS_DATA = [
     highlights: ["100% Central AC", "Customizable Stage & Lighting", "Private VIP Dining Lounge", "In-built Acoustic Panels"]
   },
   {
-    id: "poolside-courtyard",
-    name: "Poolside Sundown Courtyard",
-    subtitle: "Ideal for Haldi, Sangeet & Cocktail Parties",
-    capacity: "100 - 350 Guests",
-    size: "10,000 Sq. Ft.",
-    image: "/banquet-interior.jpg",
-    description: "A vibrant poolside deck designed for mesmerizing sunset Haldi, energetic Mehendi, and glamorous evening cocktail nights.",
-    highlights: ["Illuminated Pool Deck", "Cabana Lounge Seating", "Mocktail & Cocktail Bar", "DJ & Live Music Setup"]
+    id: "fountain-courtyard",
+    name: "Royal Grand Fountain Courtyard",
+    subtitle: "Cascading Multi-Tier Fountain & Royal Promenade",
+    capacity: "200 - 800 Guests",
+    size: "15,000 Sq. Ft.",
+    image: "/active-fountain.jpg",
+    description: "A majestic open-air courtyard featuring an illuminated multi-tier blue mosaic fountain and grand palace facade, creating an iconic setting for Baarat arrivals, royal welcomes, and celebratory receptions.",
+    highlights: ["Multi-Tier Water Fountain", "Grand Baarat Entry Pathway", "Illuminated Palace Backdrops", "Outdoor Reception & Cocktail Space"]
   },
   {
     id: "luxury-suites",
@@ -48,7 +51,7 @@ export const RESORTS_DATA = [
     subtitle: "24 Executive Rooms & AC Preparation Suites",
     capacity: "50+ Stay Capacity",
     size: "24 Rooms",
-    image: "/active-fountain.jpg",
+    image: "/banquet-interior.jpg",
     description: "Sumptuous air-conditioned bridal dressing suites and executive guest rooms ensuring full comfort for the wedding family and special guests.",
     highlights: ["Full Makeup Vanities", "24/7 Room Service", "Private Locker Storage", "En-suite Luxury Bathrooms"]
   }

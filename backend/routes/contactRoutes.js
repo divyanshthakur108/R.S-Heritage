@@ -4,11 +4,33 @@ const nodemailer = require('nodemailer');
 const { createTransporter } = require('../config/mailer');
 const { query } = require('../config/db');
 
+// Public Availability Endpoint for Calendar Modal
+router.get('/availability', async (req, res) => {
+  try {
+    const result = await query('SELECT date_str, status FROM availability');
+    const availabilityMap = {};
+    result.rows.forEach(row => {
+      availabilityMap[row.date_str] = row.status;
+    });
+
+    return res.status(200).json({
+      success: true,
+      availability: availabilityMap
+    });
+  } catch (error) {
+    console.error('Public fetch availability API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to fetch date availability'
+    });
+  }
+});
+
 router.post('/contact', async (req, res) => {
   try {
     const { name, email, phone, location, eventDate, guestCount, eventType, message } = req.body;
 
-    // Basic Validation
+    // 1. Basic Required Field Validation
     if (!name || !email || !phone || !eventDate || !eventType) {
       return res.status(400).json({
         success: false,
@@ -16,10 +38,46 @@ router.post('/contact', async (req, res) => {
       });
     }
 
+    // 2. Email Format Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please enter a valid email address format (e.g. user@domain.com).'
+      });
+    }
+
+    // 3. Phone Number Validation
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please enter a valid phone number with at least 10 digits.'
+      });
+    }
+
+    // 4. Date Conflict Check in Availability Table
+    const availCheck = await query('SELECT status FROM availability WHERE date_str = $1', [eventDate]);
+    if (availCheck.rows.length > 0 && availCheck.rows[0].status === 'booked') {
+      return res.status(409).json({
+        success: false,
+        error: `Sorry, ${eventDate} is already reserved for another event. Please select a different date.`
+      });
+    }
+
+    // Sanitize values
+    const safeName = name.trim().slice(0, 150);
+    const safeEmail = email.trim().toLowerCase().slice(0, 150);
+    const safePhone = phone.trim().slice(0, 50);
+    const safeLocation = (location || '').trim().slice(0, 200);
+    const safeGuestCount = (guestCount || '').toString().trim().slice(0, 50);
+    const safeEventType = eventType.trim().slice(0, 100);
+    const safeMessage = (message || '').trim().slice(0, 2000);
+
     // Save booking inquiry to PostgreSQL database
     await query(
       'INSERT INTO bookings (name, email, phone, location, event_date, guest_count, event_type, message) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-      [name, email, phone, location, eventDate, guestCount, eventType, message]
+      [safeName, safeEmail, safePhone, safeLocation, eventDate, safeGuestCount, safeEventType, safeMessage]
     );
 
     // Attempt email notification dispatch

@@ -1,50 +1,68 @@
 import React from 'react';
-import { Users, Maximize, CheckCircle2, Calendar } from 'lucide-react';
+import { Users, Maximize, CheckCircle2, Calendar, ArrowUpRight } from 'lucide-react';
 import { RESORTS_DATA } from '../data/venueData';
 
 const Resorts = ({ onBookNowClick }) => {
   return (
-    <section id="resorts" className="py-24 bg-royal-emeraldDark text-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="resorts" className="py-16 sm:py-24 md:py-32 regal-bg-pattern relative text-white border-t border-gold-line w-full max-w-full">
+      
+      {/* Background Radial Overlay */}
+      <div className="regal-bg-overlay" />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-royal-gold font-semibold text-sm uppercase tracking-widest block mb-2">
-            Venues & Event Spaces
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white mb-4">
-            Explore Our Grand Venues
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="flex items-center justify-center space-x-3 mb-3">
+            <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
+            <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
+              Venues & Event Spaces
+            </span>
+            <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-gold" />
+          </div>
+          <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl font-light text-white mb-3 sm:mb-4">
+            Explore Our <span className="scribble-wrap font-hand text-gold-light text-3xl sm:text-5xl md:text-6xl px-1 font-normal">Grand</span> Venues
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-royal-gold to-transparent mx-auto mb-6" />
-          <p className="text-gray-300 text-base sm:text-lg">
+          <div className="flex items-center justify-center space-x-2 my-3 sm:my-4">
+            <div className="w-12 sm:w-16 h-[1px] bg-gold/40" />
+            <div className="w-1.5 h-1.5 border border-gold rotate-45 shrink-0" />
+            <div className="w-12 sm:w-16 h-[1px] bg-gold/40" />
+          </div>
+          <p className="font-garamond text-base sm:text-lg md:text-xl text-gray-300 font-light leading-relaxed">
             Choose from magnificent open-air green lawns, climate-controlled imperial banquet halls, 
             and luxurious preparation suites tailored for events of any size.
           </p>
         </div>
 
-        {/* Venues Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+        {/* Venues Grid (21Oaks + Regal Empirus Card Design) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
           {RESORTS_DATA.map((venue) => (
             <div
               key={venue.id}
-              className="bg-royal-emeraldLight/50 rounded-2xl overflow-hidden border border-royal-gold/30 hover:border-royal-gold transition-all duration-300 shadow-glass flex flex-col group"
+              className="bg-[#14100d]/90 rounded-xl overflow-hidden border border-gold/25 hover:border-gold/60 transition-all duration-500 shadow-2xl flex flex-col group relative"
             >
-              {/* Image Container */}
-              <div className="relative h-64 sm:h-72 overflow-hidden">
+              {/* Image Container with Top Gold Corner Brackets & Availability Tag */}
+              <div className="relative h-56 sm:h-64 md:h-72 overflow-hidden">
                 <img
                   src={venue.image}
                   alt={venue.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-royal-emeraldDark via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#14100d] via-transparent to-transparent opacity-90" />
                 
+                {/* 21Oaks Style Top Available Tag */}
+                <div className="absolute top-3 left-3 z-10 inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-950/85 text-emerald-300 text-[10px] font-serif tracking-wider backdrop-blur-md border border-emerald-500/40">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Booking Open</span>
+                </div>
+
                 {/* Badges Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-royal-emeraldDark/80 text-royal-gold text-xs font-semibold backdrop-blur-md border border-royal-gold/30">
-                    <Users className="w-3.5 h-3.5" />
+                <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between">
+                  <div className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-bg-dark/85 text-gold-light text-[11px] sm:text-xs font-serif tracking-wider backdrop-blur-md border border-gold/30">
+                    <Users className="w-3.5 h-3.5 text-gold" />
                     <span>{venue.capacity}</span>
                   </div>
-                  <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-royal-gold/90 text-royal-emeraldDark text-xs font-bold shadow-sm">
+                  <div className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-gold/90 text-bg-dark text-[11px] sm:text-xs font-serif font-bold shadow-sm">
                     <Maximize className="w-3.5 h-3.5" />
                     <span>{venue.size}</span>
                   </div>
@@ -52,38 +70,40 @@ const Resorts = ({ onBookNowClick }) => {
               </div>
 
               {/* Card Body */}
-              <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
+              <div className="p-5 sm:p-7 md:p-8 flex-1 flex flex-col justify-between space-y-6">
                 <div>
-                  <h3 className="font-serif text-2xl font-bold text-gold-gradient mb-1">
+                  <h3 className="font-serif text-2xl font-light text-gold-light mb-1">
                     {venue.name}
                   </h3>
-                  <p className="text-xs text-royal-goldLight/80 font-medium uppercase tracking-wider mb-4">
+                  <p className="font-sans text-[11px] text-gold/80 font-medium uppercase tracking-[0.18em] mb-4">
                     {venue.subtitle}
                   </p>
-                  <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                  <p className="font-garamond text-gray-300 text-base leading-relaxed mb-6">
                     {venue.description}
                   </p>
 
                   {/* Feature Checklist */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-white/10 pt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-gold-line pt-4">
                     {venue.highlights.map((highlight, idx) => (
-                      <div key={idx} className="flex items-center space-x-2 text-xs text-gray-200">
-                        <CheckCircle2 className="w-4 h-4 text-royal-gold shrink-0" />
+                      <div key={idx} className="flex items-center space-x-2 text-xs text-gray-300 font-sans">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-gold shrink-0" />
                         <span>{highlight}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Card Action */}
+                {/* Card Action Button (21Oaks Button Style) */}
                 <button
                   onClick={onBookNowClick}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-royal-gold/20 to-royal-gold/40 hover:from-royal-gold hover:to-royal-goldDark text-royal-gold hover:text-royal-emeraldDark font-bold text-sm border border-royal-gold/40 hover:border-transparent transition-all duration-300 flex items-center justify-center space-x-2"
+                  className="button-21oaks w-full justify-center py-3 text-xs"
                 >
-                  <Calendar className="w-4 h-4 shrink-0" />
+                  <Calendar className="w-3.5 h-3.5 text-gold shrink-0" />
                   <span>Reserve {venue.name}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-gold arrow-icon-rotate" />
                 </button>
               </div>
+
             </div>
           ))}
         </div>

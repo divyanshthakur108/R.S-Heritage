@@ -48,8 +48,14 @@ const ContactForm = ({ selectedDate }) => {
   const validateField = (name, value) => {
     let errMsg = '';
     if (name === 'phone') {
-      if (!value || value.length < 10) {
-        errMsg = 'Please enter a valid phone number.';
+      const clean = (value || '').replace(/\D/g, '');
+      if (!clean || clean.length < 10) {
+        errMsg = 'Please enter a valid 10-digit phone number.';
+      }
+    } else if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value || !emailRegex.test(value.trim())) {
+        errMsg = 'Please enter a valid email address (e.g. name@domain.com).';
       }
     } else if (name === 'eventDate') {
       const today = getTodayDateString();
@@ -61,8 +67,8 @@ const ContactForm = ({ selectedDate }) => {
     } else if (name === 'guestCount') {
       if (!value) {
         errMsg = 'Please enter estimated guest count.';
-      } else if (!/^\d+$/.test(value)) {
-        errMsg = 'Estimated guests count must be a numeric value.';
+      } else if (!/^\d+$/.test(value) || parseInt(value, 10) <= 0) {
+        errMsg = 'Estimated guests count must be greater than 0.';
       }
     }
     setErrors(prev => ({ ...prev, [name]: errMsg }));
@@ -72,14 +78,13 @@ const ContactForm = ({ selectedDate }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (name === 'eventDate') {
-      validateField('eventDate', value);
+    if (name === 'eventDate' || name === 'email') {
+      validateField(name, value);
     }
   };
 
   const handleGuestChange = (e) => {
     const { value } = e.target;
-    // Strip non-digit characters so user cannot type string characters
     const cleanValue = value.replace(/\D/g, '');
     setFormData(prev => ({ ...prev, guestCount: cleanValue }));
     
@@ -93,12 +98,14 @@ const ContactForm = ({ selectedDate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate phone, event date, guest count
+    // Validate name, email, phone, event date, guest count
+    const isNameValid = !!formData.name.trim();
+    const isEmailValid = validateField('email', formData.email);
     const isPhoneValid = validateField('phone', formData.phone);
     const isDateValid = validateField('eventDate', formData.eventDate);
     const isGuestsValid = validateField('guestCount', formData.guestCount);
 
-    if (!isPhoneValid || !isDateValid || !isGuestsValid) {
+    if (!isNameValid || !isEmailValid || !isPhoneValid || !isDateValid || !isGuestsValid) {
       setStatus({
         loading: false,
         success: null,
@@ -139,6 +146,7 @@ const ContactForm = ({ selectedDate }) => {
           message: ''
         });
         setErrors({
+          email: '',
           phone: '',
           eventDate: '',
           guestCount: ''
@@ -147,7 +155,7 @@ const ContactForm = ({ selectedDate }) => {
         setStatus({
           loading: false,
           success: null,
-          error: 'Unable to submit your enquiry right now. Please try again or call us directly.'
+          error: data.error || 'Unable to submit your enquiry right now. Please try again or call us directly.'
         });
       }
     } catch (err) {
@@ -161,76 +169,86 @@ const ContactForm = ({ selectedDate }) => {
   };
 
   return (
-    <section id="contact" className="py-24 bg-royal-sand relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="py-16 sm:py-24 md:py-32 regal-bg-pattern relative overflow-hidden text-white border-t border-gold-line w-full max-w-full">
+      <div className="regal-bg-overlay" />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-royal-goldDark font-semibold text-sm uppercase tracking-widest block mb-2">
-            Reserve Your Dates
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-royal-emeraldDark mb-4">
-            Book Your Wedding & Celebration
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="flex items-center justify-center space-x-3 mb-3">
+            <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
+            <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
+              Reserve Your Dates
+            </span>
+            <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-gold" />
+          </div>
+          <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl font-light text-white mb-3 sm:mb-4">
+            Book Your Wedding & <span className="font-hand text-gold-light text-3xl sm:text-5xl md:text-6xl px-1 font-normal">Celebration</span>
           </h2>
-          <div className="w-24 h-1 bg-royal-gold mx-auto mb-6" />
-          <p className="text-gray-600 text-base sm:text-lg">
+          <div className="flex items-center justify-center space-x-2 my-3 sm:my-4">
+            <div className="w-12 sm:w-16 h-[1px] bg-gold/40" />
+            <div className="w-1.5 h-1.5 border border-gold rotate-45 shrink-0" />
+            <div className="w-12 sm:w-16 h-[1px] bg-gold/40" />
+          </div>
+          <p className="font-garamond text-base sm:text-lg md:text-xl text-gray-300 font-light leading-relaxed">
             Send us your event details or call our venue manager directly to check dates and schedule a private site visit.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-start">
           
           {/* Left Column: Direct Venue Contacts */}
-          <div className="lg:col-span-5 bg-royal-emeraldDark text-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-royal-gold/30 space-y-8">
+          <div className="lg:col-span-5 bg-[#14100d]/90 text-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl border border-gold/30 space-y-8">
             <div>
-              <div className="inline-flex items-center space-x-2 text-royal-gold text-xs font-bold uppercase tracking-widest mb-3">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center space-x-2 text-gold text-xs font-serif tracking-[0.2em] uppercase mb-3">
+                <Sparkles className="w-4 h-4 text-gold" />
                 <span>Private Consultation</span>
               </div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-gold-gradient mb-3">
+              <h3 className="font-serif text-2xl sm:text-3xl font-light text-gold-light mb-3">
                 R.S Heritage Office
               </h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
+              <p className="font-garamond text-gray-300 text-base leading-relaxed">
                 Visit our estate for a personal tour of the Grand Lawns, Imperial Banquet Hall, and Luxury Preparation Suites.
               </p>
             </div>
 
-            <div className="space-y-6 border-t border-white/10 pt-6">
+            <div className="space-y-6 border-t border-gold-line pt-6">
               
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-royal-gold/10 text-royal-gold flex items-center justify-center shrink-0 border border-royal-gold/30">
+                <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs text-royal-goldLight uppercase tracking-wider font-semibold">Direct Calls & WhatsApp</h4>
-                  <a href={`tel:${VENUE_INFO.phonePrimary}`} className="block text-white font-bold hover:text-royal-gold text-base mt-0.5">
+                  <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Direct Calls & WhatsApp</h4>
+                  <a href={`tel:${VENUE_INFO.phonePrimary}`} className="block text-white font-bold hover:text-gold text-base mt-0.5 font-sans">
                     {VENUE_INFO.phonePrimary}
                   </a>
-                  <a href={`tel:${VENUE_INFO.phoneSecondary}`} className="block text-gray-300 text-sm hover:text-royal-gold">
+                  <a href={`tel:${VENUE_INFO.phoneSecondary}`} className="block text-gray-400 text-sm hover:text-gold font-sans">
                     {VENUE_INFO.phoneSecondary}
                   </a>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-royal-gold/10 text-royal-gold flex items-center justify-center shrink-0 border border-royal-gold/30">
+                <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs text-royal-goldLight uppercase tracking-wider font-semibold">Email Inquiries</h4>
-                  <a href={`mailto:${VENUE_INFO.email}`} className="text-white font-medium hover:text-royal-gold text-sm block mt-0.5">
+                  <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Email Inquiries</h4>
+                  <a href={`mailto:${VENUE_INFO.email}`} className="text-white font-medium hover:text-gold text-sm block mt-0.5 font-sans">
                     {VENUE_INFO.email}
                   </a>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-royal-gold/10 text-royal-gold flex items-center justify-center shrink-0 border border-royal-gold/30">
+                <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs text-royal-goldLight uppercase tracking-wider font-semibold">Venue Address</h4>
-                  <p className="text-gray-300 text-sm leading-snug mt-0.5">
+                  <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Venue Address</h4>
+                  <p className="text-gray-300 text-sm leading-snug mt-0.5 font-sans">
                     {VENUE_INFO.address}
                   </p>
                 </div>
@@ -238,29 +256,29 @@ const ContactForm = ({ selectedDate }) => {
 
             </div>
 
-            <div className="bg-royal-emeraldLight/60 p-4 rounded-xl border border-royal-gold/20 text-center">
-              <span className="text-xs text-royal-goldLight/80 block">Office Hours</span>
-              <span className="text-sm font-bold text-white">Monday - Sunday: 9:00 AM - 9:00 PM</span>
+            <div className="bg-bg-dark/80 p-4 rounded-xl border border-gold/25 text-center">
+              <span className="text-xs text-gold/80 block font-serif tracking-wider uppercase">Office Hours</span>
+              <span className="text-sm font-bold text-white font-sans">Monday - Sunday: 9:00 AM - 9:00 PM</span>
             </div>
           </div>
 
           {/* Right Column: Interactive Booking Form */}
-          <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-royal-gold/20">
-            <h3 className="font-serif text-2xl font-bold text-royal-emeraldDark mb-6">
+          <div className="lg:col-span-7 bg-[#14100d]/90 p-5 sm:p-8 md:p-10 rounded-2xl shadow-xl border border-gold/30 text-white">
+            <h3 className="font-serif text-2xl font-light text-gold-light mb-6">
               Send Date Availability Request
             </h3>
 
             {/* Notification Badges */}
             {status.success && (
-              <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 flex items-start space-x-3 animate-fadeIn">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="mb-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 flex items-start space-x-3 animate-fadeIn">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <p className="text-sm font-medium">{status.success}</p>
               </div>
             )}
 
             {status.error && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-300 text-red-800 flex items-start space-x-3 animate-fadeIn">
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+              <div className="mb-6 p-4 rounded-xl bg-red-950/80 border border-red-500/40 text-red-200 flex items-start space-x-3 animate-fadeIn">
+                <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 <p className="text-sm font-medium">{status.error}</p>
               </div>
             )}
@@ -270,8 +288,8 @@ const ContactForm = ({ selectedDate }) => {
               {/* Name & Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Full Name <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="text"
@@ -280,13 +298,13 @@ const ContactForm = ({ selectedDate }) => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Vikram Sharma"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-400 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Phone Number <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Phone Number <span className="text-red-400">*</span>
                   </label>
                   <PhoneInput
                     country={'in'}
@@ -294,7 +312,7 @@ const ContactForm = ({ selectedDate }) => {
                     onChange={(phone) => {
                       setFormData(prev => ({ ...prev, phone }));
                       if (phone.length < 10) {
-                        setErrors(prev => ({ ...prev, phone: 'Please enter a valid phone number with country code.' }));
+                        setErrors(prev => ({ ...prev, phone: 'Please enter a valid 10-digit phone number.' }));
                       } else {
                         setErrors(prev => ({ ...prev, phone: '' }));
                       }
@@ -303,8 +321,10 @@ const ContactForm = ({ selectedDate }) => {
                       width: '100%',
                       height: '46px',
                       borderRadius: '12px',
-                      border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
-                      fontSize: '14px',
+                      border: errors.phone ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.15)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: '#ffffff',
+                      fontSize: '15px',
                       paddingLeft: '48px',
                       outline: 'none',
                       fontFamily: 'sans-serif'
@@ -312,16 +332,21 @@ const ContactForm = ({ selectedDate }) => {
                     buttonStyle={{
                       borderTopLeftRadius: '12px',
                       borderBottomLeftRadius: '12px',
-                      border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                      border: errors.phone ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.15)',
                       borderRight: 'none',
-                      backgroundColor: 'transparent'
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)'
+                    }}
+                    dropdownStyle={{
+                      backgroundColor: '#14100d',
+                      color: '#ffffff',
+                      borderColor: 'rgba(200, 164, 74, 0.3)'
                     }}
                     containerStyle={{
                       width: '100%'
                     }}
                   />
                   {errors.phone && (
-                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                    <span className="text-xs text-red-400 font-medium mt-1.5 block">
                       {errors.phone}
                     </span>
                   )}
@@ -331,8 +356,8 @@ const ContactForm = ({ selectedDate }) => {
               {/* Email & Event Type */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Email Address <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Email Address <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="email"
@@ -341,33 +366,40 @@ const ContactForm = ({ selectedDate }) => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="vikram@example.com"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                    className={`w-full px-4 py-3 rounded-xl bg-white/5 border ${
+                      errors.email ? 'border-red-500' : 'border-white/15'
+                    } text-white placeholder-gray-400 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all`}
                   />
+                  {errors.email && (
+                    <span className="text-xs text-red-400 font-medium mt-1.5 block">
+                      {errors.email}
+                    </span>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Event Type <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Event Type <span className="text-red-400">*</span>
                   </label>
                   <select
                     name="eventType"
                     value={formData.eventType}
                     onChange={handleChange}
-                    className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all bg-white"
+                    className="w-full pl-4 pr-10 py-3 rounded-xl bg-[#1c1611] border border-white/15 text-white focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
                   >
-                    <option value="Wedding Ceremony">Wedding Ceremony</option>
-                    <option value="Grand Reception">Grand Reception</option>
-                    <option value="Haldi / Sangeet / Mehendi">Haldi / Sangeet / Mehendi</option>
-                    <option value="Ring Ceremony / Engagement">Ring Ceremony / Engagement</option>
-                    <option value="Birthday & Anniversary">Birthday & Anniversary</option>
-                    <option value="Corporate Gala / Exhibition">Corporate Gala / Exhibition</option>
+                    <option value="Wedding Ceremony" className="bg-[#14100d] text-white">Wedding Ceremony</option>
+                    <option value="Grand Reception" className="bg-[#14100d] text-white">Grand Reception</option>
+                    <option value="Haldi / Sangeet / Mehendi" className="bg-[#14100d] text-white">Haldi / Sangeet / Mehendi</option>
+                    <option value="Ring Ceremony / Engagement" className="bg-[#14100d] text-white">Ring Ceremony / Engagement</option>
+                    <option value="Birthday & Anniversary" className="bg-[#14100d] text-white">Birthday & Anniversary</option>
+                    <option value="Corporate Gala / Exhibition" className="bg-[#14100d] text-white">Corporate Gala / Exhibition</option>
                   </select>
                 </div>
               </div>
 
               {/* Location Field */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
                   Customer Location / City
                 </label>
                 <input
@@ -376,15 +408,15 @@ const ContactForm = ({ selectedDate }) => {
                   value={formData.location}
                   onChange={handleChange}
                   placeholder="e.g. Chandigarh / Mohali / Panchkula"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-400 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
                 />
               </div>
 
               {/* Date & Guest Count */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Target Event Date <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Target Event Date <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="date"
@@ -393,20 +425,20 @@ const ContactForm = ({ selectedDate }) => {
                     min={getTodayDateString()}
                     value={formData.eventDate}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-xl border outline-none text-sm transition-all ${
-                      errors.eventDate ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-royal-gold focus:ring-royal-gold/20'
+                    className={`w-full px-4 py-3 rounded-xl bg-white/5 border text-white outline-none text-sm transition-all ${
+                      errors.eventDate ? 'border-red-500 focus:ring-red-400/20' : 'border-white/15 focus:border-royal-gold focus:ring-royal-gold/20'
                     } focus:ring-2`}
                   />
                   {errors.eventDate && (
-                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                    <span className="text-xs text-red-400 font-medium mt-1.5 block">
                       {errors.eventDate}
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                    Estimated Guests <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
+                    Estimated Guests <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="text"
@@ -415,12 +447,12 @@ const ContactForm = ({ selectedDate }) => {
                     value={formData.guestCount}
                     onChange={handleGuestChange}
                     placeholder="e.g. 500"
-                    className={`w-full px-4 py-3 rounded-xl border outline-none text-sm transition-all ${
-                      errors.guestCount ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-royal-gold focus:ring-royal-gold/20'
+                    className={`w-full px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-gray-400 outline-none text-sm transition-all ${
+                      errors.guestCount ? 'border-red-500 focus:ring-red-400/20' : 'border-white/15 focus:border-royal-gold focus:ring-royal-gold/20'
                     } focus:ring-2`}
                   />
                   {errors.guestCount && (
-                    <span className="text-xs text-red-500 font-medium mt-1.5 block">
+                    <span className="text-xs text-red-400 font-medium mt-1.5 block">
                       {errors.guestCount}
                     </span>
                   )}
@@ -429,7 +461,7 @@ const ContactForm = ({ selectedDate }) => {
 
               {/* Message */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gold-light mb-2">
                   Special Requirements / Message
                 </label>
                 <textarea
@@ -438,7 +470,7 @@ const ContactForm = ({ selectedDate }) => {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Tell us about your catering, decor preferences, or specific lawn requirements..."
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-400 focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 outline-none text-sm transition-all"
                 />
               </div>
 

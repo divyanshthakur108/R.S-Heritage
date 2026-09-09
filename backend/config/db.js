@@ -64,19 +64,39 @@ const initializeDatabase = async () => {
     `);
     console.log('📋 Verified "availability" table exists.');
 
-    // 4. Seed Default Admin
+    // 4. Create Performance Indexes
+    await query('CREATE INDEX IF NOT EXISTS idx_bookings_event_date ON bookings(event_date);');
+    await query('CREATE INDEX IF NOT EXISTS idx_availability_date_str ON availability(date_str);');
+    console.log('📋 Verified database performance indexes.');
+
+    // 5. Seed / Secure Default Admin User
     const defaultUser = process.env.ADMIN_USERNAME || 'admin';
     const defaultPass = process.env.ADMIN_PASSWORD || 'admin123';
     
+    let bcrypt;
+    try {
+      bcrypt = require('bcryptjs');
+    } catch (e) {
+      bcrypt = null;
+    }
+
     const adminCheck = await query('SELECT * FROM users WHERE username = $1', [defaultUser]);
     if (adminCheck.rows.length === 0) {
+      const hashedPassword = bcrypt ? bcrypt.hashSync(defaultPass, 10) : defaultPass;
       await query(
         'INSERT INTO users (username, password, role) VALUES ($1, $2, $3)',
-        [defaultUser, defaultPass, 'admin']
+        [defaultUser, hashedPassword, 'admin']
       );
       console.log(`👤 Seeded default admin user: "${defaultUser}"`);
     } else {
-      console.log('👤 Admin user already exists in database.');
+      // If admin password is not hashed, convert it to hashed for security
+      const existingUser = adminCheck.rows[0];
+      if (bcrypt && existingUser.password && !existingUser.password.startsWith('$2a$') && !existingUser.password.startsWith('$2b$')) {
+        const hashedPassword = bcrypt.hashSync(existingUser.password, 10);
+        await query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, existingUser.id]);
+        console.log('🔒 Upgraded existing admin password to bcrypt hash.');
+      }
+      console.log('👤 Admin user verified in database.');
     }
 
   } catch (error) {
