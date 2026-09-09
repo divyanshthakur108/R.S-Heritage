@@ -1,6 +1,7 @@
 import React from 'react';
 import { UtensilsCrossed, Sparkles, Car, Zap, Music, ShieldCheck } from 'lucide-react';
 import { FEATURES_SERVICES } from '../data/venueData';
+import Reveal from './Reveal';
 
 const iconMap = {
   UtensilsCrossed,
@@ -19,7 +20,7 @@ const Features = () => {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="flex items-center justify-center space-x-3 mb-3">
             <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
             <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
@@ -38,7 +39,7 @@ const Features = () => {
           <p className="font-garamond text-base sm:text-lg md:text-xl text-gray-300 font-light leading-relaxed">
             We provide end-to-end luxury event infrastructure, so you can relax and cherish your royal moments.
           </p>
-        </div>
+        </Reveal>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
@@ -46,9 +47,11 @@ const Features = () => {
             const IconComponent = iconMap[service.icon] || Sparkles;
 
             return (
-              <div
+              <Reveal
                 key={index}
-                className="bg-[#14100d]/90 p-6 sm:p-8 rounded-2xl border border-gold/25 hover:border-gold/60 transition-all duration-300 shadow-xl group hover:-translate-y-1"
+                variant="up"
+                delay={(index % 3) * 110}
+                className="reveal-card bg-[#14100d]/90 p-6 sm:p-8 rounded-2xl border border-gold/25 hover:border-gold/60 transition-all duration-300 shadow-xl group hover:-translate-y-1"
               >
                 <div className="w-12 h-12 rounded-xl bg-gold/15 text-gold flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-gold group-hover:text-bg-dark transition-all duration-300 shadow-md border border-gold/30">
                   <IconComponent className="w-6 h-6" />
@@ -59,7 +62,7 @@ const Features = () => {
                 <p className="font-garamond text-gray-400 text-base leading-relaxed">
                   {service.description}
                 </p>
-              </div>
+              </Reveal>
             );
           })}
         </div>

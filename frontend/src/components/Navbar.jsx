@@ -136,7 +136,7 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
 
             {/* Desktop Navigation Links (Center - hidden on mobile/tablet) */}
             <nav
-              className="hidden lg:flex items-center justify-center space-x-1 xl:space-x-2 flex-1 px-3"
+              className="hidden lg:flex items-center justify-center space-x-0.5 xl:space-x-2 flex-1 min-w-0 px-1 xl:px-3"
               aria-label="Primary Navigation"
             >
               {navLinks.map((link) => {
@@ -161,16 +161,16 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
               {/* Book Venue CTA Button (Responsive for all screen sizes) */}
               <button
                 onClick={handleBookNow}
-                className="button-21oaks text-[9.5px] sm:text-xs py-1.5 px-3 sm:py-2 sm:px-4"
+                className="button-21oaks text-[9.5px] sm:text-xs py-1.5 px-3 sm:py-2 sm:px-4 shrink-0"
               >
-                <span>Book Venue</span>
+                <span className="nav-cta-label">Book Venue</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-gold arrow-icon-rotate" />
               </button>
 
               {/* Mobile Hamburger Toggle Button (lg:hidden) */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gold/40 bg-white/5 hover:bg-white/10 active:scale-95 text-gold-light flex lg:hidden items-center justify-center transition-all focus:outline-none shrink-0"
+                className="nav-icon-button w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gold/40 bg-white/5 hover:bg-white/10 active:scale-95 text-gold-light flex lg:hidden items-center justify-center transition-all focus:outline-none shrink-0"
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-nav-drawer"

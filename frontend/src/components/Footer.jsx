@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, Mail, MapPin, ExternalLink, Heart, Instagram } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
+import Reveal from './Reveal';
 
 const Footer = () => {
   return (
@@ -12,7 +13,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           
           {/* Col 1: Brand Info */}
-          <div className="space-y-4">
+          <Reveal className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-11 h-11 rounded-full border border-gold overflow-hidden shadow-glow shrink-0 bg-bg-dark flex items-center justify-center">
                 <img src="/logo.jpg" alt="R.S Heritage Logo" className="w-full h-full object-cover" />
@@ -24,10 +25,10 @@ const Footer = () => {
             <p className="font-garamond text-gray-300 text-base leading-relaxed">
               {VENUE_INFO.tagline}. Jaipur Road's premier destination for royal weddings, receptions, and memorable celebrations.
             </p>
-          </div>
+          </Reveal>
 
           {/* Col 2: Quick Links */}
-          <div>
+          <Reveal delay={100}>
             <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Quick Links
             </h4>
@@ -39,10 +40,10 @@ const Footer = () => {
               <li><a href="#gallery" className="hover:text-gold transition-colors">Photo Gallery</a></li>
               <li><a href="#contact" className="hover:text-gold transition-colors">Contact Us</a></li>
             </ul>
-          </div>
+          </Reveal>
 
           {/* Col 3: Venues */}
-          <div>
+          <Reveal delay={200}>
             <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Our Venues
             </h4>
@@ -53,10 +54,10 @@ const Footer = () => {
               <li>Bridal Preparation Suites</li>
               <li>Executive Guest Rooms</li>
             </ul>
-          </div>
+          </Reveal>
 
           {/* Col 4: Reach Us */}
-          <div className="space-y-3">
+          <Reveal delay={300} className="space-y-3">
             <h4 className="font-serif text-sm tracking-[0.2em] font-semibold text-gold mb-4 uppercase border-b border-gold-line pb-2 inline-block">
               Connect With Us
             </h4>
@@ -82,7 +83,7 @@ const Footer = () => {
               <span>View Location on Google Maps</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
-          </div>
+          </Reveal>
 
         </div>
       </div>

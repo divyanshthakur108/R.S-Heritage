@@ -3,6 +3,7 @@ import { Send, Phone, Mail, MapPin, Calendar, Users, Sparkles, CheckCircle2, Ale
 import { VENUE_INFO } from '../data/venueData';
 import PhoneInput from 'react-phone-input-2';
 import { useToast } from '../context/ToastContext';
+import Reveal from './Reveal';
 import 'react-phone-input-2/lib/style.css';
 
 const getTodayDateString = () => {
@@ -175,7 +176,7 @@ const ContactForm = ({ selectedDate }) => {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="flex items-center justify-center space-x-3 mb-3">
             <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
             <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
@@ -194,7 +195,7 @@ const ContactForm = ({ selectedDate }) => {
           <p className="font-garamond text-base sm:text-lg md:text-xl text-gray-300 font-light leading-relaxed">
             Send us your event details or call our venue manager directly to check dates and schedule a private site visit.
           </p>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-start">
           
@@ -215,38 +216,38 @@ const ContactForm = ({ selectedDate }) => {
 
             <div className="space-y-6 border-t border-gold-line pt-6">
               
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <Phone className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Direct Calls & WhatsApp</h4>
-                  <a href={`tel:${VENUE_INFO.phonePrimary}`} className="block text-white font-bold hover:text-gold text-base mt-0.5 font-sans">
+                  <a href={`tel:${VENUE_INFO.phonePrimary}`} className="contact-link block text-white font-bold hover:text-gold text-base mt-0.5 font-sans">
                     {VENUE_INFO.phonePrimary}
                   </a>
-                  <a href={`tel:${VENUE_INFO.phoneSecondary}`} className="block text-gray-400 text-sm hover:text-gold font-sans">
+                  <a href={`tel:${VENUE_INFO.phoneSecondary}`} className="contact-link block text-gray-400 text-sm hover:text-gold font-sans">
                     {VENUE_INFO.phoneSecondary}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Email Inquiries</h4>
-                  <a href={`mailto:${VENUE_INFO.email}`} className="text-white font-medium hover:text-gold text-sm block mt-0.5 font-sans">
+                  <a href={`mailto:${VENUE_INFO.email}`} className="contact-link text-white font-medium hover:text-gold text-sm block mt-0.5 font-sans break-all">
                     {VENUE_INFO.email}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 border border-gold/30">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h4 className="text-xs text-gold uppercase tracking-wider font-serif">Venue Address</h4>
                   <p className="text-gray-300 text-sm leading-snug mt-0.5 font-sans">
                     {VENUE_INFO.address}

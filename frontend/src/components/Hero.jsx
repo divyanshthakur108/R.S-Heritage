@@ -10,6 +10,10 @@ const Hero = () => {
 
   const videoRef = useRef(null);
 
+  const videoSrc = isMobile
+    ? '/video/Create_a_cinematic_vertical_.mp4'
+    : '/video/Create_a_cinematic_ultra_prem.mp4';
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768 || window.innerHeight > window.innerWidth;
@@ -61,10 +65,11 @@ const Hero = () => {
         loading="eager"
       />
 
-      {/* Full-bleed background video */}
+      {/* Full-bleed background video (portrait cut on mobile, landscape on desktop) */}
       <video
+        key={isMobile ? 'mobile' : 'desktop'}
         ref={videoRef}
-        src="/video/Create_a_cinematic_ultra_prem.mp4"
+        src={videoSrc}
         autoPlay
         loop
         muted
@@ -78,10 +83,7 @@ const Hero = () => {
           opacity: 1
         }}
       >
-        <source 
-          src="/video/Create_a_cinematic_ultra_prem.mp4" 
-          type="video/mp4" 
-        />
+        <source src={videoSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 

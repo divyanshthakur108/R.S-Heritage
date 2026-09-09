@@ -1,6 +1,7 @@
 import React from 'react';
 import { Users, Maximize, CheckCircle2, Calendar, ArrowUpRight } from 'lucide-react';
 import { RESORTS_DATA } from '../data/venueData';
+import Reveal from './Reveal';
 
 const Resorts = ({ onBookNowClick }) => {
   return (
@@ -12,7 +13,7 @@ const Resorts = ({ onBookNowClick }) => {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="flex items-center justify-center space-x-3 mb-3">
             <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
             <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
@@ -32,14 +33,16 @@ const Resorts = ({ onBookNowClick }) => {
             Choose from magnificent open-air green lawns, climate-controlled imperial banquet halls, 
             and luxurious preparation suites tailored for events of any size.
           </p>
-        </div>
+        </Reveal>
 
         {/* Venues Grid (21Oaks + Regal Empirus Card Design) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
-          {RESORTS_DATA.map((venue) => (
-            <div
+          {RESORTS_DATA.map((venue, index) => (
+            <Reveal
               key={venue.id}
-              className="bg-[#14100d]/90 rounded-xl overflow-hidden border border-gold/25 hover:border-gold/60 transition-all duration-500 shadow-2xl flex flex-col group relative"
+              variant="up"
+              delay={(index % 2) * 130}
+              className="reveal-card bg-[#14100d]/90 rounded-xl overflow-hidden border border-gold/25 hover:border-gold/60 transition-all duration-500 shadow-2xl flex flex-col group relative"
             >
               {/* Image Container with Top Gold Corner Brackets & Availability Tag */}
               <div className="relative h-56 sm:h-64 md:h-72 overflow-hidden">
@@ -104,7 +107,7 @@ const Resorts = ({ onBookNowClick }) => {
                 </button>
               </div>
 
-            </div>
+            </Reveal>
           ))}
         </div>
 

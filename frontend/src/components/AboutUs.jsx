@@ -1,6 +1,7 @@
 import React from 'react';
 import { HeartHandshake, Shield, ArrowRight } from 'lucide-react';
 import { VENUE_INFO } from '../data/venueData';
+import Reveal from './Reveal';
 
 const AboutUs = () => {
   return (
@@ -24,10 +25,10 @@ const AboutUs = () => {
       <div className="relative z-10 w-full max-w-[1380px] mx-auto px-5 sm:px-8 lg:px-12">
         
         {/* Responsive Grid: 1 col on mobile (<768px), 2 col on tablet & desktop (45% image / 55% content) */}
-        <div className="grid grid-cols-1 md:grid-cols-[44%_56%] lg:grid-cols-[45%_55%] gap-8 md:gap-8 lg:gap-12 xl:gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-[44fr_56fr] lg:grid-cols-[45fr_55fr] gap-8 md:gap-8 lg:gap-12 xl:gap-16 items-center">
           
           {/* Left Column: Corner-Bracketed Luxury Image Frame */}
-          <div className="relative w-full max-w-full">
+          <Reveal variant="left" className="relative w-full max-w-full">
             <div className="relative w-full h-[320px] sm:h-[380px] md:h-[460px] lg:h-[540px] xl:h-[580px] rounded-lg overflow-hidden border border-gold/30 shadow-2xl group">
               <img
                 src="/97ef2420-d4f9-433e-a89c-253e3c25e5a9.png"
@@ -54,10 +55,10 @@ const AboutUs = () => {
                 Lush Green Open Lawns
               </p>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right Column: Narrative Content */}
-          <div className="space-y-4 sm:space-y-5 lg:space-y-6 pt-3 sm:pt-0 max-w-full">
+          <Reveal variant="right" delay={120} className="space-y-4 sm:space-y-5 lg:space-y-6 pt-3 sm:pt-0 max-w-full">
             
             {/* Tagline Indicator */}
             <div className="flex items-center space-x-2.5 sm:space-x-3">
@@ -125,7 +126,7 @@ const AboutUs = () => {
               </a>
             </div>
 
-          </div>
+          </Reveal>
 
         </div>
 

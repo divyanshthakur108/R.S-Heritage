@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GALLERY_ITEMS } from '../data/venueData';
 import { Sparkles, Maximize2, X } from 'lucide-react';
+import Reveal from './Reveal';
 
 const Gallery = () => {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -21,7 +22,7 @@ const Gallery = () => {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <div className="flex items-center justify-center space-x-3 mb-3">
             <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-gold" />
             <span className="font-serif text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-gold uppercase">
@@ -40,7 +41,7 @@ const Gallery = () => {
           <p className="font-garamond text-base sm:text-lg md:text-xl text-gray-300 font-light leading-relaxed">
             Take a glance at past royal weddings, mandap illuminations, and festive sangeet evenings hosted at R.S Heritage.
           </p>
-        </div>
+        </Reveal>
 
         {/* Regal Category Pills (Regal Empirus Style) */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 sm:mb-12">
@@ -57,11 +58,13 @@ const Gallery = () => {
 
         {/* Photo Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {filteredItems.map((item) => (
-            <div
+          {filteredItems.map((item, index) => (
+            <Reveal
               key={item.id}
+              variant="zoom"
+              delay={(index % 3) * 110}
               onClick={() => setSelectedImage(item)}
-              className="gallery-card group relative h-64 sm:h-72 md:h-80 rounded-xl overflow-hidden border border-gold/25 cursor-pointer bg-[#14100d]"
+              className="gallery-card reveal-card group relative h-64 sm:h-72 md:h-80 rounded-xl overflow-hidden border border-gold/25 cursor-pointer bg-[#14100d]"
             >
               <img
                 src={item.image}
@@ -86,7 +89,7 @@ const Gallery = () => {
                   {item.title}
                 </h3>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
 
