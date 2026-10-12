@@ -35,20 +35,20 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-royal-emeraldDark/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-md bg-royal-emeraldDark text-white rounded-3xl border border-royal-gold/40 shadow-2xl p-6 sm:p-8 space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-royal-emeraldDark/80 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-md bg-royal-emeraldDark text-white rounded-2xl sm:rounded-3xl border border-royal-gold/40 shadow-2xl p-5 sm:p-8 space-y-5 sm:space-y-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-royal-gold/20 text-royal-gold flex items-center justify-center border border-royal-gold/40">
-              <ShieldCheck className="w-5 h-5" />
+        <div className="flex items-center justify-between border-b border-white/10 pb-3.5 sm:pb-4">
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-royal-gold/20 text-royal-gold flex items-center justify-center border border-royal-gold/40 shrink-0">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h3 className="font-serif text-xl font-bold text-gold-gradient">
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-gold-gradient leading-tight">
                 Admin Authentication
               </h3>
-              <p className="text-xs text-royal-goldLight/80">
+              <p className="text-[10.5px] sm:text-xs text-royal-goldLight/80 mt-0.5">
                 Sign in to manage venue date availability
               </p>
             </div>
@@ -56,7 +56,8 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+            className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full text-gray-300 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close Admin Modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -77,7 +78,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
               Username
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-royal-gold absolute left-3.5 top-3.5" />
+              <User className="w-4 h-4 text-royal-gold absolute left-3.5 top-4" />
               <input
                 type="text"
                 required
@@ -85,7 +86,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
                 autoComplete="off"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
+                className="w-full min-h-[48px] pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-base sm:text-sm text-white transition-all"
               />
             </div>
           </div>
@@ -95,7 +96,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-royal-gold absolute left-3.5 top-3.5" />
+              <Lock className="w-4 h-4 text-royal-gold absolute left-3.5 top-4" />
               <input
                 type="password"
                 required
@@ -103,7 +104,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 autoComplete="new-password"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
+                className="w-full min-h-[48px] pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-base sm:text-sm text-white transition-all"
               />
             </div>
           </div>
@@ -111,7 +112,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-royal-gold to-royal-goldDark text-royal-emeraldDark font-bold text-sm tracking-wider uppercase shadow-glow hover:brightness-110 active:scale-98 transition-all flex items-center justify-center space-x-2 mt-2"
+            className="w-full min-h-[48px] py-3.5 rounded-xl bg-gradient-to-r from-royal-gold to-royal-goldDark text-royal-emeraldDark font-bold text-xs sm:text-sm tracking-wider uppercase shadow-glow hover:brightness-110 active:scale-98 transition-all flex items-center justify-center space-x-2 mt-2 cursor-pointer"
           >
             {submitting ? (
               <>

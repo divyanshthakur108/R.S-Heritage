@@ -39,11 +39,14 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [mobileMenuOpen]);
 
@@ -95,14 +98,15 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
       {/* Floating Regal Header Container */}
       <header
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 pt-2.5 sm:pt-4 transition-all duration-500 pointer-events-none ${
-          isScrolled ? 'pt-2 sm:pt-3' : 'pt-2.5 sm:pt-5'
+        className={`fixed left-0 right-0 z-50 flex justify-center px-2 sm:px-4 md:px-6 transition-all duration-300 pointer-events-none ${
+          isScrolled ? 'pt-2 sm:pt-2.5' : 'pt-2 sm:pt-3 md:pt-4'
         }`}
+        style={{ top: 'max(0px, env(safe-area-inset-top, 0px))' }}
       >
         <div className="relative w-full max-w-[1100px] pointer-events-auto">
           
           {/* Animated Gold Glowing Outer Pill Container */}
-          <div className="relative flex items-center justify-between h-13 sm:h-16 px-3 sm:px-4 rounded-full bg-gradient-to-r from-[#15231c]/95 via-[#111d17]/98 to-[#15231c]/95 backdrop-blur-xl border border-gold/30 shadow-2xl animate-gold-pulse transition-all">
+          <div className="relative flex items-center justify-between h-14 sm:h-16 px-2.5 sm:px-4 rounded-full bg-gradient-to-r from-[#15231c]/95 via-[#111d17]/98 to-[#15231c]/95 backdrop-blur-xl border border-gold/30 shadow-2xl transition-all">
             
             {/* Subtle Gradient Border Accent Overlay */}
             <div 
@@ -117,7 +121,7 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
               className="flex items-center space-x-2 sm:space-x-3 shrink-0 lg:pr-4 lg:border-r border-gold-line/40 my-1 group focus:outline-none"
               aria-label="R.S Heritage Homepage"
             >
-              <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border border-gold/60 overflow-hidden shadow-glow group-hover:scale-105 transition-transform shrink-0 bg-bg-dark flex items-center justify-center">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border border-gold/60 overflow-hidden shadow-glow group-hover:scale-105 transition-transform shrink-0 bg-bg-dark flex items-center justify-center">
                 <img
                   src="/logo.jpg"
                   alt="R.S Heritage Emblem"
@@ -125,10 +129,10 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
                 />
               </div>
               <div className="flex flex-col justify-center">
-                <span className="font-serif text-[10.5px] sm:text-sm md:text-base font-bold tracking-[0.12em] sm:tracking-[0.18em] text-[#e8c97a] block leading-none whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <span className="font-serif text-xs sm:text-sm md:text-base font-bold tracking-[0.12em] sm:tracking-[0.18em] text-[#e8c97a] block leading-tight whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                   R.S HERITAGE
                 </span>
-                <span className="text-[6.5px] sm:text-[8px] md:text-[8.5px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#c8a44a] block mt-1 font-medium whitespace-nowrap font-sans">
+                <span className="hidden min-[400px]:block text-[7px] sm:text-[8px] md:text-[8.5px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#c8a44a] mt-0.5 font-medium whitespace-nowrap font-sans leading-none">
                   Marriage & Event Venue
                 </span>
               </div>
@@ -158,10 +162,10 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             {/* Right Action Group - Book Venue & Hamburger Menu */}
             <div className="flex items-center space-x-1.5 sm:space-x-3 lg:pl-4 lg:border-l border-gold-line/40 shrink-0">
               
-              {/* Book Venue CTA Button (Responsive for all screen sizes) */}
+              {/* Book Venue CTA Button (Hidden on mobile < 640px, moved into mobile drawer) */}
               <button
                 onClick={handleBookNow}
-                className="button-21oaks text-[9.5px] sm:text-xs py-1.5 px-3 sm:py-2 sm:px-4"
+                className="hidden sm:inline-flex button-21oaks text-xs py-2 px-4 shrink-0"
               >
                 <span>Book Venue</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-gold arrow-icon-rotate" />
@@ -170,15 +174,15 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
               {/* Mobile Hamburger Toggle Button (lg:hidden) */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gold/40 bg-white/5 hover:bg-white/10 active:scale-95 text-gold-light flex lg:hidden items-center justify-center transition-all focus:outline-none shrink-0"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-gold/40 bg-white/5 hover:bg-white/10 active:scale-95 text-gold-light flex lg:hidden items-center justify-center transition-all focus:outline-none shrink-0 cursor-pointer"
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-nav-drawer"
               >
                 {mobileMenuOpen ? (
-                  <X className="w-4 h-4 text-gold" />
+                  <X className="w-5 h-5 text-gold" />
                 ) : (
-                  <Menu className="w-4 h-4 text-gold" />
+                  <Menu className="w-5 h-5 text-gold" />
                 )}
               </button>
             </div>
@@ -189,7 +193,7 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
 
       {/* Mobile Navigation Drawer Overlay & Content */}
       <div
-        className={`fixed inset-0 bg-black/75 backdrop-blur-md z-40 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden transition-opacity duration-300 ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setMobileMenuOpen(false)}
@@ -198,7 +202,8 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
 
       <div
         id="mobile-nav-drawer"
-        className={`fixed top-16 sm:top-20 left-2.5 right-2.5 sm:left-4 sm:right-4 z-40 lg:hidden regal-bg-pattern border border-gold/30 rounded-3xl p-4 sm:p-6 shadow-2xl transition-all duration-400 ease-out origin-top ${
+        style={{ position: 'fixed' }}
+        className={`fixed top-[68px] sm:top-20 inset-x-2 sm:inset-x-4 max-h-[calc(100svh-80px)] overflow-y-auto z-40 lg:hidden regal-bg-pattern border border-gold/30 rounded-3xl p-5 sm:p-6 shadow-2xl transition-all duration-300 ease-out origin-top ${
           mobileMenuOpen
             ? 'opacity-100 translate-y-0 pointer-events-auto visible'
             : 'opacity-0 -translate-y-4 pointer-events-none invisible'
@@ -210,8 +215,8 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
             R.S Heritage Menu
           </div>
 
-          {/* Navigation Links */}
-          <nav className="flex flex-col space-y-2" aria-label="Mobile Navigation Menu">
+          {/* Navigation Links with large tap targets (min 44px) */}
+          <nav className="flex flex-col space-y-1.5" aria-label="Mobile Navigation Menu">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
 
@@ -220,10 +225,10 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
                   key={link.name}
                   href={link.href}
                   onClick={() => handleNavLinkClick(link.id)}
-                  className={`font-serif text-base sm:text-lg tracking-[0.18em] uppercase py-2 sm:py-2.5 rounded-xl transition-all ${
+                  className={`min-h-[44px] flex items-center justify-center font-serif text-base sm:text-lg tracking-[0.16em] uppercase py-2.5 px-4 rounded-xl transition-all ${
                     isActive
                       ? 'text-gold-light font-bold bg-gold/15 border border-gold/30'
-                      : 'text-gray-300 hover:text-gold hover:bg-white/5'
+                      : 'text-gray-300 hover:text-gold hover:bg-white/5 active:bg-white/10'
                   }`}
                 >
                   {link.name}
@@ -233,12 +238,21 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
           </nav>
 
           {/* Mobile Action Section */}
-          <div className="pt-3 border-t border-gold-line flex flex-col space-y-2.5 items-center">
+          <div className="pt-3 border-t border-gold-line flex flex-col space-y-3 items-center">
+            {/* Full-width Book Venue CTA */}
+            <button
+              onClick={handleBookNow}
+              className="w-full min-h-[48px] rounded-full bg-gradient-to-r from-gold via-gold-light to-gold-dark text-[#0a0c0e] font-serif font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(200,164,74,0.4)] hover:brightness-105 active:scale-98 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+            >
+              <span>Book Venue Now</span>
+              <ArrowUpRight className="w-4 h-4 text-[#0a0c0e]" />
+            </button>
+
             {isAdmin ? (
               <a
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-full bg-gold/20 text-gold-light font-serif font-bold text-xs tracking-wider border border-gold/60 flex items-center justify-center space-x-2"
+                className="w-full min-h-[44px] py-2.5 rounded-full bg-gold/20 text-gold-light font-serif font-bold text-xs tracking-wider border border-gold/60 flex items-center justify-center space-x-2"
               >
                 <ShieldCheck className="w-4 h-4 text-gold" />
                 <span>Admin Dashboard</span>
@@ -249,22 +263,13 @@ const Navbar = ({ onBookNowClick, onOpenCalendar, onOpenAdminLogin }) => {
                   setMobileMenuOpen(false);
                   if (onOpenAdminLogin) onOpenAdminLogin();
                 }}
-                className="w-full py-2 rounded-full bg-white/5 text-gold-light font-serif text-xs tracking-wider border border-gold/30 flex items-center justify-center space-x-2"
+                className="w-full min-h-[44px] py-2 rounded-full bg-white/5 text-gold-light font-serif text-xs tracking-wider border border-gold/30 flex items-center justify-center space-x-2"
               >
                 <ShieldCheck className="w-4 h-4 text-gold" />
                 <span>Admin Login</span>
               </button>
             )}
-
-            <button
-              onClick={handleBookNow}
-              className="re-cta w-full justify-center py-2.5 text-xs"
-            >
-              <span>Book Venue Now</span>
-              <ArrowUpRight className="w-4 h-4 text-gold" />
-            </button>
           </div>
-
         </div>
       </div>
     </>

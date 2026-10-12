@@ -81,7 +81,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <section id="admin-dashboard" className="py-20 bg-royal-cream border-t-4 border-royal-gold relative">
+    <section id="admin-dashboard" className="py-12 sm:py-20 bg-royal-cream border-t-4 border-royal-gold relative w-full max-w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Dashboard Header */}

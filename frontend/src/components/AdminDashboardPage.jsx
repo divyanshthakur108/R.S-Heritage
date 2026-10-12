@@ -193,7 +193,7 @@ const AdminDashboardPage = () => {
   // --- RENDERING ADMIN LOGIN FORM (If not authenticated) ---
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-royal-emeraldDark flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div className="min-h-screen bg-royal-emeraldDark flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans w-full max-w-full overflow-x-hidden">
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-royal-gold/15 border-2 border-royal-gold mb-4 shadow-glow">
             <span className="text-3xl">👑</span>
@@ -228,7 +228,7 @@ const AdminDashboardPage = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter Username"
                   autoComplete="off"
-                  className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
+                  className="mt-2 w-full min-h-[48px] px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-base sm:text-sm text-white transition-all"
                 />
               </div>
 
@@ -243,7 +243,7 @@ const AdminDashboardPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter Password"
                   autoComplete="new-password"
-                  className="mt-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-sm text-white transition-all"
+                  className="mt-2 w-full min-h-[48px] px-4 py-3 rounded-xl bg-white/5 border border-white/15 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none text-base sm:text-sm text-white transition-all"
                 />
               </div>
 
@@ -302,7 +302,7 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-royal-cream text-gray-900 font-sans flex flex-col">
+    <div className="min-h-screen bg-royal-cream text-gray-900 font-sans flex flex-col w-full max-w-full overflow-x-hidden">
       
       {/* Dashboard Top Header */}
       <header className="bg-royal-emeraldDark text-white border-b-4 border-royal-gold px-6 py-4 shadow-md sticky top-0 z-10">

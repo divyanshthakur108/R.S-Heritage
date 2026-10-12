@@ -34,7 +34,7 @@ function MainAppLayout() {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0c0e] text-gray-100 font-sans">
+    <div className="w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0c0e] text-gray-100 font-sans pb-20 md:pb-0">
       <Navbar 
         onBookNowClick={scrollToContact} 
         onOpenCalendar={() => setIsCalendarOpen(true)} 
